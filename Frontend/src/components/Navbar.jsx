@@ -26,7 +26,7 @@ function Navbar() {
   const apiUrl = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const getProducts = async () => {
-      fetch("http://localhost:5000/api/products", {
+      fetch(`${import.meta.env.VITE_API_URL}/api/products`, {
         method: "GET",
       })
         .then(async (response) => {

@@ -32,7 +32,7 @@ const Home = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const getProducts = async () => {
-      fetch("http://localhost:5000/api/products", {
+      fetch(`${import.meta.env.VITE_API_URL}/api/products`, {
         method: "GET",
       })
         .then(async (response) => {
@@ -58,7 +58,7 @@ const Home = () => {
     const formData = new FormData(e.target);
     // console.log(formData.get("productImage").files);
     
-    fetch("http://localhost:5000/api/products", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/products`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
