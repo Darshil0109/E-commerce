@@ -1,30 +1,3 @@
-export const FETCH_USER_REQUEST = 'FETCH_USER_REQUEST'
-export const FETCH_USER_SUCCESS = 'FETCH_USER_SUCCESS'
-export const FETCH_USER_FAILURE = 'FETCH_USER_FAILURE'
-
-export const FETCH_CART_REQUEST = 'FETCH_CART_REQUEST'
-export const FETCH_CART_SUCCESS = 'FETCH_CART_SUCCESS' 
-export const FETCH_CART_FAILURE = 'FETCH_CART_FAILURE' 
-export const ADD_CART_REQUEST = 'ADD_CART_REQUEST'
-export const ADD_CART_SUCCESS = 'ADD_CART_SUCCESS' 
-export const ADD_CART_FAILURE = 'ADD_CART_FAILURE' 
-export const DELETE_CART_REQUEST = 'DELETE_CART_REQUEST'
-export const DELETE_CART_SUCCESS = 'DELETE_CART_SUCCESS'
-export const DELETE_CART_FAILURE = 'DELETE_CART_FAILURE'
-
-export const fetchUserRequest = () =>({
-    type: FETCH_USER_REQUEST
-})
-export const fetchUserSuccess = (users) =>({
-    type: FETCH_USER_SUCCESS,
-    payload : users
-})
-export const fetchUserFailure = (error) =>({
-    type: FETCH_USER_FAILURE,
-    payload : error
-})
-
-
 // Check User is Authenticated 
 export const USER_AUTHENTICATION_REQUEST = 'USER_AUTHENTICATION_REQUEST';
 export const USER_AUTHENTICATION_SUCCESS = 'USER_AUTHENTICATION_SUCCESS';
@@ -42,6 +15,25 @@ export const userAuthenticationFailure = (error) =>({
     payload : error,
 })
 
+
+
+
+
+
+export const FETCH_CART_REQUEST = 'FETCH_CART_REQUEST'
+export const FETCH_CART_SUCCESS = 'FETCH_CART_SUCCESS' 
+export const FETCH_CART_FAILURE = 'FETCH_CART_FAILURE' 
+export const ADD_CART_REQUEST = 'ADD_CART_REQUEST'
+export const ADD_CART_SUCCESS = 'ADD_CART_SUCCESS' 
+export const ADD_CART_FAILURE = 'ADD_CART_FAILURE' 
+export const DELETE_CART_REQUEST = 'DELETE_CART_REQUEST'
+export const DELETE_CART_SUCCESS = 'DELETE_CART_SUCCESS'
+export const DELETE_CART_FAILURE = 'DELETE_CART_FAILURE'
+export const CLEAR_CART_REQUEST = 'CLEAR_CART_REQUEST'
+export const CLEAR_CART_SUCCESS = 'CLEAR_CART_SUCCESS'
+export const CLEAR_CART_FAILURE = 'CLEAR_CART_FAILURE'
+
+
 //cart 
 export const fetchCartRequest = (userID) =>({
     type: FETCH_CART_REQUEST,
@@ -55,6 +47,7 @@ export const fetchCartFailure = (error) =>({
     type: FETCH_CART_FAILURE,
     payload : error
 })
+
 export const addCartRequest = (product) =>({
     type: ADD_CART_REQUEST,
     payload:product
@@ -68,6 +61,7 @@ export const addCartFailure = (error) =>({
     payload : error
 })
 
+
 export const deleteCartRequest = (product) =>({
     type:DELETE_CART_REQUEST,
     payload:product,
@@ -79,4 +73,56 @@ export const deleteCartSuccess = (product) =>({
 export const deleteCartFailure = (error) =>({
     type:DELETE_CART_FAILURE,
     payload:error
+})
+
+
+export const clearCartRequest = (payload) =>({
+    type:CLEAR_CART_REQUEST,
+    payload:payload
+})
+export const clearCartSuccess = (cart) =>({
+    type:CLEAR_CART_SUCCESS,
+    payload:cart
+})
+export const clearCartFailure = (error) =>({
+    type:CLEAR_CART_FAILURE,
+    payload:error
+})
+
+
+
+
+export const FETCH_ORDER_REQUEST = 'FETCH_ORDER_REQUEST'
+export const FETCH_ORDER_SUCCESS = 'FETCH_ORDER_SUCCESS'
+export const FETCH_ORDER_FAILURE = 'FETCH_ORDER_FAILURE'
+
+export const fetchOrderRequest=(userId)=>({
+    type:FETCH_ORDER_REQUEST,
+    payload:userId,
+})
+export const fetchOrderSuccess=(order)=>({
+    type:FETCH_ORDER_SUCCESS,
+    payload:order,
+})
+export const fetchOrderFailure=(error)=>({
+    type:FETCH_ORDER_FAILURE,
+    payload:error,
+})
+
+
+export const ADD_ORDER_REQUEST = 'ADD_ORDER_REQUEST'
+export const ADD_ORDER_SUCCESS = 'ADD_ORDER_SUCCESS'
+export const ADD_ORDER_FAILURE = 'ADD_ORDER_FAILURE'
+
+export const addOrderRequest=(cart)=>({
+    type:ADD_ORDER_REQUEST,
+    payload:cart,
+})
+export const addOrderSuccess=(order)=>({
+    type:ADD_ORDER_SUCCESS,
+    payload:order,
+})
+export const addOrderFailure=(error)=>({
+    type:ADD_ORDER_FAILURE,
+    payload:error,
 })

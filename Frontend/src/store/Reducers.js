@@ -1,7 +1,4 @@
 import {
-  FETCH_USER_FAILURE,
-  FETCH_USER_REQUEST,
-  FETCH_USER_SUCCESS,
   FETCH_CART_FAILURE,
   FETCH_CART_REQUEST,
   FETCH_CART_SUCCESS,
@@ -11,34 +8,26 @@ import {
   DELETE_CART_REQUEST,
   DELETE_CART_SUCCESS,
   DELETE_CART_FAILURE,
-  USER_AUTHENTICATION_REQUEST,
-  USER_AUTHENTICATION_FAILURE,
-  USER_AUTHENTICATION_SUCCESS,
+  FETCH_ORDER_REQUEST,
+  FETCH_ORDER_SUCCESS,
+  FETCH_ORDER_FAILURE,
+  ADD_ORDER_REQUEST,
+  ADD_ORDER_SUCCESS,
+  ADD_ORDER_FAILURE,
+  CLEAR_CART_REQUEST,
+  CLEAR_CART_SUCCESS,
+  CLEAR_CART_FAILURE,
 } from "./Actions";
 
-const userInitialState = {
-  loading: false,
-  users: [],
-  error: null,
-};
+import {USER_AUTHENTICATION_REQUEST,USER_AUTHENTICATION_FAILURE,USER_AUTHENTICATION_SUCCESS,} from './Actions'
+
+
 const cartInitialState = {
   loading: false,
   cart: [],
   error: null,
 };
 
-export const userReducer = (state = userInitialState, action) => {
-  switch (action.type) {
-    case FETCH_USER_REQUEST:
-      return { ...state, loading: true };
-    case FETCH_USER_SUCCESS:
-      return { loading: false, users: action.payload, error: null };
-    case FETCH_USER_FAILURE:
-      return { loading: false, users: [], error: action.payload };
-    default:
-      return state;
-  }
-};
 export const cartReducer = (state = cartInitialState, action) => {
   switch (action.type) {
     case FETCH_CART_REQUEST:
@@ -64,10 +53,40 @@ export const cartReducer = (state = cartInitialState, action) => {
           
     case DELETE_CART_FAILURE:
       return { loading: false, cart: [], error: action.payload };
+      
+    case CLEAR_CART_REQUEST:
+      return state;
+    case CLEAR_CART_SUCCESS:
+        return {loading:false,cart: [],error:null};
+    case CLEAR_CART_FAILURE:
+      return { loading: false, cart: null, error: action.payload };
     default:
       return state;
   }
 };
+const orderInitialState = {
+  loading : false,
+  orders : null,
+  error : ''
+}
+export const OrderReducer = (state = orderInitialState,action) =>{
+  switch (action.type) {
+    case FETCH_ORDER_REQUEST:
+      return {...state,loading:true} 
+    case FETCH_ORDER_SUCCESS:
+      return {loading:false,orders:action.payload,error:''}
+    case FETCH_ORDER_FAILURE:
+      return {loading:false,orders:null,error:action.payload}
+    case ADD_ORDER_REQUEST:
+      return state 
+    case ADD_ORDER_SUCCESS:
+      return {loading:false,orders:action.payload,error:''}
+    case ADD_ORDER_FAILURE:
+      return {loading:false,orders:null,error:action.payload}
+    default:
+      return state;
+  }
+}
 
 const userDataInitialState = {
   loading : false,
@@ -78,7 +97,7 @@ const userDataInitialState = {
 export const UserAuthenticationReducer = (state = userDataInitialState , action) =>{
   switch (action.type) {
     case USER_AUTHENTICATION_REQUEST:
-      return {loading:true,userData:null,isLoggedIn:false,error:''}
+      return state
     case USER_AUTHENTICATION_SUCCESS:
       return {loading:false,userData:action.payload,isLoggedIn:true,error:''}
     case USER_AUTHENTICATION_FAILURE:

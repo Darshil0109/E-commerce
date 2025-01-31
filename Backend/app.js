@@ -49,6 +49,7 @@ const userDataSchema = new mongoose.Schema({
   }
 });
 
+
 const ProductSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -89,14 +90,38 @@ const CartSchema = new mongoose.Schema({
     {
       productId: mongoose.Schema.Types.ObjectId,
       quantity: Number,
+      price:Number,
     },
   ],
 });
+
+const OrderSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Reference to the User model
+    required: true,
+  },
+  items: [
+    {
+      productId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "Product", // References the Product model
+        required: true 
+      },
+      quantity: { type: Number, required: true, min: 1 },
+      price: { type: Number, required: true },
+    },
+  ],
+  totalPrice: { type: Number, required: true },
+  createdAt : { type: Date, default:Date.now()},
+})
+
 
 const User = mongoose.model('User', UserSchema);
 const Product = mongoose.model('Product', ProductSchema);
 const Cart = mongoose.model('Cart', CartSchema);
 const UserData = mongoose.model('UserData', userDataSchema);
+const Order = mongoose.model('Order',OrderSchema);
 
 //Middleware to verify Token
 const verifyToken = (req, res, next) => {
@@ -122,6 +147,30 @@ app.get('/api/users/info',verifyToken,async(req,res)=>{
   }
 })
 
+app.get('/api/users/orders/:userid',async(req,res)=>{
+  try {
+    const {userid} =req.params;
+    // console.log(userid);
+    
+    const orders = await Order.find({userId : userid})
+    res.json(orders)
+  } catch (error) {
+    res.json(error)
+  }
+})
+
+app.post('/api/users/orders',async(req,res)=>{
+  try {
+    const {userid,items,price} = req.body;
+    const newOrder = new Order({userId:userid,items:items,totalPrice:price})
+    // console.log("this is new Order",newOrder);
+    await newOrder.save();
+    res.json(newOrder)
+  } catch (error) {
+    res.json(error)
+  }
+})
+
 
 // User Routes
 app.post('/api/users/register', async (req, res) => {
@@ -130,6 +179,8 @@ app.post('/api/users/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ name, email, password:hashedPassword });
     await user.save();
+    const cart = new Cart({ userId:user._id, products: [] });
+    await cart.save()
     const userData = new UserData({userId:user._id,phone:'',street:'',city:'',state:'',postalCode:'',country:'',lastLogin:Date.now()})
     await userData.save();
     const token = jwt.sign(
@@ -202,13 +253,10 @@ app.get('/api/products', async (req, res) => {
 // Cart Routes
 app.post('/api/cart', async (req, res) => {
   try {
-    const { userId, productId, quantity } = req.body;
-
-    let cart = await Cart.findOne({ userId });
-    if (!cart) {
-      cart = new Cart({ userId, products: [] });
-    }
-
+    const { userId, productId, quantity,price } = req.body;
+    
+    let cart = await Cart.findOne({ userId:userId });
+    
     const productIndex = cart.products.findIndex(
       p => p.productId.toString() === productId
     );
@@ -216,12 +264,14 @@ app.post('/api/cart', async (req, res) => {
     if (productIndex > -1) {
       cart.products[productIndex].quantity += quantity;
     } else {
-      cart.products.push({ productId, quantity });
+      cart.products.push({ productId, quantity,price });
     }
 
     await cart.save();
     res.json({ message: 'Cart updated successfully', cart });
   } catch (err) {
+    console.log(err);
+    
     res.status(400).json({ error: err.message });
   }
 });
@@ -254,15 +304,29 @@ app.delete('/api/cart/:userId', async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
+app.put('/api/users/clearcart', async (req, res) => {
+  const { userId } = req.body;
+  try {
+    // Update the user's cart by setting the products array to an empty array
+    const updatedCart = await Cart.findOneAndUpdate(
+      { userId },
+      { $set: { products: [] } },
+      { new: true } // Return the updated document
+    );
 
+    if (!updatedCart) {
+      return res.status(404).send('Cart not found for this user.');
+    }
+
+    res.status(200).send('Cart cleared successfully.');
+  } catch (error) {
+    res.status(500).send('Error clearing cart: ' + error.message);
+  }
+});
 app.get('/api/cart/:userId', async (req, res) => {
   try {
-
-    
-    const cart = await Cart.findOne({ userId: req.params.userId }).populate(
-      'products.productId'
-    );
-    res.json(cart);
+    const cart = await Cart.findOne({ userId: req.params.userId });
+    res.json([cart]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -8,6 +8,7 @@ import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import Services from './pages/Services';
 import Contact from './pages/Contact';
+import Order from './Order';
 
 
 const App = () => {
@@ -21,6 +22,7 @@ const App = () => {
           <Route path="/services" element={<Services />}></Route>
           <Route path="/contact" element={<Contact />}></Route>
           <Route path="/profile" element={<Profile />}></Route>
+          <Route path="/orders" element={<Order />}></Route>
       </Routes>
       <ToastContainer />
       

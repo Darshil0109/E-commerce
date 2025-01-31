@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { userAuthenticationRequest } from "../store/Actions";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import Button from "../Button";
 import { toast } from "react-toastify";
+import { fetchOrderRequest } from "../store/Actions";
 
 const Profile = () => {
   const navigate = useNavigate();
+  
   const handleLogout = () => {
     // Remove the token from cookies
     Cookies.remove("token"); // Adjust 'token' if your cookie name is different
@@ -23,25 +24,33 @@ const Profile = () => {
       draggable: true,
       progress: undefined,
     });
-    dispatch(userAuthenticationRequest());
     navigate("/");
   };
-
-  const dispatch = useDispatch();
   const [userInfo, setUserInfo] = useState([]);
   const userLoading = useSelector((state) => state.userData.loading);
   const userData = useSelector((state) => state.userData.userData);
   const userError = useSelector((state) => state.userData.error);
-
   const isLoggedIn = useSelector((state) => state.userData.isLoggedIn);
-  useEffect(() => {
-    dispatch(userAuthenticationRequest());
-  }, [dispatch]);
+  
+  // const orderLoading = useSelector((state)=>state.orders.loading);
+  const orderData = useSelector((state)=>state.orders.orders);
+  // const orderError = useSelector((state)=>state.orders.error);
+  const dispatch = useDispatch()
+  console.log(orderData);
+  
   useEffect(()=>{
-    if (!isLoggedIn && userData) {
+    if (userData?.id) {
+      dispatch(fetchOrderRequest(userData.id))
+    }
+  },[dispatch,userData])
+  
+  useEffect(() => {
+    if (userLoading) return; // Prevent execution while still fetching data
+    if (!isLoggedIn && !userData && userError) {
       navigate("/login");
     }
-  },[isLoggedIn,navigate,userData])
+  }, [userLoading, navigate, userData, userError,isLoggedIn]);
+  
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {

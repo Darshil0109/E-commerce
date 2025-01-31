@@ -1,28 +1,29 @@
-import { ShoppingCart, X, UserRound,UserPen } from "lucide-react";
+import { ShoppingCart, X, UserRound, UserPen } from "lucide-react";
 import { Link } from "react-router-dom";
 import Modal from "../Modal";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../Button";
-import { deleteCartRequest, userAuthenticationRequest } from "../store/Actions";
+import { addOrderRequest, deleteCartRequest, fetchOrderRequest, userAuthenticationRequest } from "../store/Actions";
+import { toast } from "react-toastify";
 
 function Navbar() {
-  const userData = useSelector((state) => state.user.users);
+  const userData = useSelector((state) => state.userData.userData);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const cartLoading = useSelector((state) => state.cart.loading);
   const cartData = useSelector((state) => state.cart.cart);
   const cartError = useSelector((state) => state.cart.error);
-  
   const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
   const handleCartClick = () => {
     setIsCartOpen(true);
   };
-   const isLoggedIn = useSelector((state)=> state.userData.isLoggedIn);
-    useEffect(() => {
-      dispatch(userAuthenticationRequest());
-    }, [dispatch]);
+  const isLoggedIn = useSelector((state) => state.userData.isLoggedIn);
+  useEffect(() => {
+    dispatch(userAuthenticationRequest());
+  }, [dispatch]);
+  
   const apiUrl = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const getProducts = async () => {
@@ -39,6 +40,11 @@ function Navbar() {
     };
     getProducts();
   }, [apiUrl]);
+  let totalPrice = 0;
+  const calculateTotal = (price) => {
+    totalPrice += price;
+  };
+  
   return (
     <>
       <nav className="bg-white dark:bg-gray-800 shadow-md">
@@ -76,7 +82,9 @@ function Navbar() {
             <div className="mr-4 relative">
               <Link
                 to="/login"
-                className={`${isLoggedIn ? 'hidden' :''} text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400`}
+                className={`${
+                  isLoggedIn ? "hidden" : ""
+                } text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400`}
               >
                 <UserRound />
               </Link>
@@ -84,7 +92,9 @@ function Navbar() {
             <div className="mr-4 relative">
               <Link
                 to="/profile"
-                className={`${isLoggedIn ? '' :'hidden'} text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400`}
+                className={`${
+                  isLoggedIn ? "" : "hidden"
+                } text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400`}
               >
                 <UserPen />
               </Link>
@@ -154,7 +164,9 @@ function Navbar() {
                 </Link>
                 <Link
                   to="/profile"
-                  className={`${isLoggedIn ? "" : 'hidden'} text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400`}
+                  className={`${
+                    isLoggedIn ? "" : "hidden"
+                  } text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400`}
                 >
                   Profile
                 </Link>
@@ -168,48 +180,76 @@ function Navbar() {
         title={"Cart"}
         onClose={() => setIsCartOpen(false)}
       >
-        <div className="space-y-4">
-          {cartLoading ? (
-            <p className="text-center">Loading...</p>
-          ) : cartError ? (
-            <p className="text-red-500 text-center">
-              Error Occurred: {cartError}
-            </p>
-          ) : (
-            cartData?.map((item, index) => {
-              let product = products.find(
-                (productItem) => productItem._id === item.productId
-              );
-              return (
-                <div
-                  key={index}
-                  className="p-4 border rounded-lg flex justify-between items-center"
-                >
-                  <div>
-                    <p className="font-semibold">{product?.name}</p>
-                    <p className="text-gray-600">{product?.description}</p>
-                    <p>Quantity: {item.quantity}</p>
-                    <p className="text-green-500">${product?.price}</p>
-                  </div>
-
-                  <Button
-                    className="bg-red-500 text-white px-3 py-1 rounded"
-                    onClick={() => {
-                      product.userId = userData.userId;
-                      dispatch(deleteCartRequest(product));
-                    }}
+        <>
+        
+          <div className="space-y-4 ">
+            {cartLoading ? (
+              <p className="text-center">Loading...</p>
+            ) : cartError ? (
+              <p className="text-red-500 text-center">
+                Error Occurred: {cartError}
+              </p>
+            ) : (
+              cartData?.map((item, index) => {
+                let product = products.find(
+                  (productItem) => productItem._id === item.productId
+                );
+                return (
+                  <div
+                    key={index}
+                    className="p-4 border rounded-lg flex  flex-col sm:flex-row justify-between sm:items-center"
                   >
-                    Remove
-                  </Button>
-                </div>
-              );
-            })
-          )}
-        </div>
+                    <div>
+                      <p className="font-semibold">{product?.name}</p>
+                      <p className="text-gray-600">{product?.description}</p>
+                      <p>Quantity: {item?.quantity}</p>
+                      <p className="text-green-500">${product?.price}</p>
+                      {calculateTotal(product?.price * item?.quantity)}
+                      {item.price = product?.price}
+                    </div>
+
+                    <Button
+                      className="bg-red-500 text-white px-3 py-1 rounded"
+                      onClick={() => {
+                        product.userId = userData.id;
+                        dispatch(deleteCartRequest(product));
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                );
+              })
+            )}
+            <span className="text-left font-bold">Total Price is :</span>
+            <span className="float-right font-bold">$ {totalPrice}</span>
+          </div>
+          <Button
+            className="bg-green-500 text-white px-3 py-1 rounded"
+            onClick={() => {
+              if (cartData.length === 0) {
+                toast.error('No Products in cart',{
+                  position: "top-right",
+                  autoClose: 3000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                });
+              }
+              else{
+                dispatch(addOrderRequest({userid:userData.id , items : cartData , price : totalPrice}))
+                dispatch(fetchOrderRequest(userData.id))
+              }
+            }}
+          >
+            Order
+          </Button>
+        </>
       </Modal>
     </>
   );
 }
-
 
 export default Navbar;

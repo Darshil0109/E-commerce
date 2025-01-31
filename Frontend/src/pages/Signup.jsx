@@ -3,10 +3,13 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 import { Eye, EyeOff } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { userAuthenticationRequest } from "../store/Actions";
 
 axios.defaults.withCredentials = true; 
 const Signup = () => {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const [isTermAccepted,setIsTermAccepted] = useState(false)
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -42,7 +45,7 @@ const Signup = () => {
                 draggable: true,
                 progress: undefined,
             });
-            
+            dispatch(userAuthenticationRequest());
             navigate('/profile')
         }
 

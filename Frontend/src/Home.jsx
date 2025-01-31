@@ -7,23 +7,19 @@ import { useEffect, useState } from "react";
 import {
   addCartRequest,
   deleteCartRequest,
-  fetchUserRequest,
+  userAuthenticationRequest,
 } from "./store/Actions";
 import Navbar from "./components/Navbar";
 
 const Home = () => {
-  const userId = "6792072a456886c4307521c2";
   const [products, setProducts] = useState([]);
 
   const dispatch = useDispatch();
-  const userLoading = useSelector((state) => state.user.loading);
-  const userData = useSelector((state) => state.user.users);
+  const userLoading = useSelector((state) => state.userData.loading);
+  const userData = useSelector((state) => state.userData.userData);
   const isLoggedIn = useSelector((state)=> state.userData.isLoggedIn);
-  const userError = useSelector((state) => state.user.error);
+  const userError = useSelector((state) => state.userData.error);
   
-  useEffect(() => {
-    dispatch(fetchUserRequest());
-  }, [dispatch]);
 
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -49,6 +45,9 @@ const Home = () => {
     getProducts();
   }, [apiUrl]);
 
+  useEffect(()=>{
+    dispatch(userAuthenticationRequest())
+  },[dispatch])
   const handleClick = () => {
     setIsOpen(true);
   };
@@ -73,7 +72,7 @@ const Home = () => {
     })
       .then(async (response) => {
         const tempResponse = await response.json();
-        setProducts([...products, tempResponse.product]);
+        setProducts(prevProducts => [...prevProducts, tempResponse.product]);
       })
       .catch(async (e) => {
         setError(e.message);
@@ -81,9 +80,12 @@ const Home = () => {
 
     setIsOpen(false);
   };
-
+  // useEffect(()=>{
+  //   console.log(products);
+    
+  // },[products])
   return (<>
-    <Navbar isLoggedIn={isLoggedIn}/>
+    <Navbar/>
     <div className="container mx-auto p-4 bg-[#101727]">
       {userError ? (
         <p className="text-red-500">{error}</p>
@@ -121,10 +123,12 @@ const Home = () => {
                   <Button
                     onClick={() => {
                       dispatch(
+                        
                         addCartRequest({
-                          userId: userData.userId,
+                          userId: userData.id,
                           productId: product._id,
                           quantity: 1,
+                          price:product.price,
                         })
                       );
                     }}

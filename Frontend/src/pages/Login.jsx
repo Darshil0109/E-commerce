@@ -3,15 +3,29 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { userAuthenticationRequest } from "../store/Actions";
 axios.defaults.withCredentials = true; 
 const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch()
   const handleLogin = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const email = formData.get("email");
     const password = formData.get("password");
+    if (!email || !password) {
+      toast.error("email and Password are required", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
     const response = await axios.post(
       `${import.meta.env.VITE_API_URL}/api/users/login`,
       {
@@ -29,6 +43,7 @@ const Login = () => {
         draggable: true,
         progress: undefined,
       });
+      dispatch(userAuthenticationRequest());
       navigate("/profile");
     } else {
       toast.error("Login Failed", {
