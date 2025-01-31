@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import Button from "../Button";
 import { toast } from "react-toastify";
-import { fetchOrderRequest } from "../store/Actions";
+import Modal from "../Modal";
+import Input from "../Input";
+import { LogOut } from "lucide-react";
+
+// import { fetchOrderRequest } from "../store/Actions";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -26,23 +30,20 @@ const Profile = () => {
     });
     navigate("/");
   };
+  
   const [userInfo, setUserInfo] = useState([]);
+  const [isprofileModalOpen,setIsprofileModalOpen] = useState(false)
   const userLoading = useSelector((state) => state.userData.loading);
   const userData = useSelector((state) => state.userData.userData);
   const userError = useSelector((state) => state.userData.error);
   const isLoggedIn = useSelector((state) => state.userData.isLoggedIn);
   
   // const orderLoading = useSelector((state)=>state.orders.loading);
-  const orderData = useSelector((state)=>state.orders.orders);
+  // const orderData = useSelector((state)=>state.orders.orders);
   // const orderError = useSelector((state)=>state.orders.error);
-  const dispatch = useDispatch()
-  console.log(orderData);
+  // console.log("Ordeer ",orderData);
   
-  useEffect(()=>{
-    if (userData?.id) {
-      dispatch(fetchOrderRequest(userData.id))
-    }
-  },[dispatch,userData])
+  
   
   useEffect(() => {
     if (userLoading) return; // Prevent execution while still fetching data
@@ -64,9 +65,49 @@ const Profile = () => {
     };
     fetchUserInfo();
   }, []);
+  const handleEditProfile = async(e) =>{
+    e.preventDefault()
+    const formData = new FormData(e.target);
+    const phone = formData.get('phone')
+    const street = formData.get('street')
+    const city = formData.get('city')
+    const state = formData.get('state')
+    const country = formData.get('country')
+    const postalCode = formData.get('postalCode')
+
+    const tempuserData = await axios.put(`${import.meta.env.VITE_API_URL}/api/users/info`,{
+      userId:userData.id,
+      phone:phone,
+      street:street,
+      city:city,
+      state:state,
+      country:country,
+      postalCode:postalCode,
+    })
+    setUserInfo(tempuserData.data)
+    setIsprofileModalOpen(false)
+  }
+
+
   return (
     <>
       <Navbar />
+      <Modal
+        isOpen = {isprofileModalOpen}
+        title = {"Edit Profile"}
+        onClose = {()=>{setIsprofileModalOpen(false)}}
+        >
+          <form onSubmit={(e)=>{handleEditProfile(e)}} >
+            <Input label="phone" placeholder="Enter Your Phone Number" type="Number" required>phone</Input>
+            <Input label="street" placeholder="Enter Your Street Name">street</Input>
+            <Input label="city" placeholder="Enter Your City Name">city</Input>
+            <Input label="state" placeholder="Enter Your State Name">state</Input>
+            <Input label="country" placeholder="Enter Your Country Name">country</Input>
+            <Input label="postalCode" placeholder="Enter Your Postal Code ">postal code</Input>
+            <Button type="submit">Save</Button>
+
+          </form>
+      </Modal>
       <div className="h-full mx-auto p-4 bg-[#101727] text-white">
         <h1 className="text-3xl font-bold mb-6 ">Profile</h1>
         {userLoading && <>Loading...</>}
@@ -108,19 +149,13 @@ const Profile = () => {
                   <p>Not Available</p>
                 ) : (
                   <>
-                    <p className="text-gray-700">
-                      {userInfo?.street ? userInfo.street : "Not Available"}
+                    <p>
+                      {userInfo?.street ? userInfo.street : "Not Available"},
+                      {userInfo?.city ? userInfo.city : "Not Available"},
                     </p>
-                    <p className="text-gray-700">
-                      {userInfo?.city ? userInfo.city : "Not Available"}
-                    </p>
-                    <p className="text-gray-700">
-                      {userInfo?.state ? userInfo.state : "Not Available"}
-                    </p>
-                    <p className="text-gray-700">
-                      {userInfo?.country ? userInfo.country : "Not Available"}
-                    </p>
-                    <p className="text-gray-700">
+                    <p>
+                    {userInfo?.state ? userInfo.state : "Not Available"},
+                      {userInfo?.country ? userInfo.country : "Not Available"} -
                       {userInfo?.postalCode
                         ? userInfo.postalCode
                         : "Not Available"}
@@ -142,13 +177,17 @@ const Profile = () => {
             </div>
           </>
         )}
-        <Button
-          onClick={handleLogout}
-          backgroundColor="#ff0000"
-          className="h-16 w-32 "
-        >
-          LogOut
-        </Button>
+        <div className="p-2 flex gap-8">
+          <Button
+            onClick={handleLogout}
+            backgroundColor="#ff0000"
+            className="h-16 w-32 "
+          >
+            <div className="flex gap-2">LogOut<LogOut/></div>
+          </Button>
+          <Button onClick={()=>{navigate('/orders')}} backgroundColor="" className="bg-green-700 h-16 w-32 mt-16">Check Orders</Button>
+          <Button onClick={()=>{setIsprofileModalOpen(true)}}  className="h-16 w-32 mt-16">Edit Profile</Button>
+        </div>
       </div>
     </>
   );

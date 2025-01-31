@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import {jwtDecode} from "jwt-decode";
 import { call, put, takeLatest,takeEvery } from "redux-saga/effects";
-import { ADD_CART_REQUEST, addCartFailure, addCartSuccess, deleteCartSuccess,deleteCartFailure,DELETE_CART_REQUEST, USER_AUTHENTICATION_REQUEST,  userAuthenticationFailure, userAuthenticationSuccess, FETCH_ORDER_REQUEST, fetchOrderFailure, fetchOrderSuccess, ADD_ORDER_REQUEST, addOrderFailure, addOrderSuccess, clearCartSuccess, clearCartFailure, CLEAR_CART_REQUEST, clearCartRequest } from "./Actions";
+import { ADD_CART_REQUEST, addCartFailure, addCartSuccess, deleteCartSuccess,deleteCartFailure,DELETE_CART_REQUEST, USER_AUTHENTICATION_REQUEST,  userAuthenticationFailure, userAuthenticationSuccess, FETCH_ORDER_REQUEST, fetchOrderFailure, fetchOrderSuccess, ADD_ORDER_REQUEST, addOrderFailure, addOrderSuccess, clearCartSuccess, clearCartFailure, CLEAR_CART_REQUEST, clearCartRequest, FETCH_PRODUCTS_REQUEST, fetchProductsFailure, fetchProductsSuccess, ADD_PRODUCTS_REQUEST, addProductsSuccess, addProductsFailure } from "./Actions";
 import { FETCH_CART_REQUEST, fetchCartFailure, fetchCartRequest, fetchCartSuccess } from "./Actions";
 import { toast } from 'react-toastify';
 
@@ -92,7 +92,7 @@ const clearCart =async(userId) =>{
 function* clearCartData(action){
     try {
       const cart = yield call(clearCart,action.payload)
-      toast.warn('Items Ordered', {
+      toast.success('Order Placed', {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -191,3 +191,45 @@ export function* watchAddOrderRequest(){
   yield takeLatest(ADD_ORDER_REQUEST,addOrderData)
 }
 
+const fetchProducts = async() =>{
+  const products= await axios.get(`${import.meta.env.VITE_API_URL}/api/products`)
+  return products.data
+}
+
+export function* fetchProductsData(){
+  try {
+    const products = yield call(fetchProducts)
+    yield put(fetchProductsSuccess(products))
+  } catch (error) {
+    yield put (fetchProductsFailure,error)
+  }
+}
+
+export function* watchFetchProductsRequest(){
+  yield takeLatest(FETCH_PRODUCTS_REQUEST,fetchProductsData)
+}
+
+const addProducts = async(product) =>{
+  const products= await axios.post(`${import.meta.env.VITE_API_URL}/api/products`,{
+    name:product.name,
+    description:product.description,
+    price:product.price,
+    stock:product.stock,
+  })
+  return products.data.product
+}
+
+export function* addProductsData(action){
+  try {
+    const products = yield call(addProducts,action.payload)
+    yield put(addProductsSuccess(products))
+  } catch (error) {
+    console.log(error);
+    
+    yield put (addProductsFailure(error))
+  }
+}
+
+export function* watchAddProductsRequest(){
+  yield takeLatest(ADD_PRODUCTS_REQUEST,addProductsData)
+}

@@ -14,7 +14,7 @@ Input.propTypes = {
     placeholder : PropTypes.string.isRequired,
     type : PropTypes.string,
     className : PropTypes.string,
-    children : PropTypes.node.isRequired,
+    children : PropTypes.node.isRequired ,
 }
 
 export default Input

@@ -6,48 +6,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import {
   addCartRequest,
+  addProductsRequest,
   deleteCartRequest,
   userAuthenticationRequest,
 } from "./store/Actions";
 import Navbar from "./components/Navbar";
 
 const Home = () => {
-  const [products, setProducts] = useState([]);
-
+  
   const dispatch = useDispatch();
+  const products = useSelector((state)=>state.products.products);
   const userLoading = useSelector((state) => state.userData.loading);
   const userData = useSelector((state) => state.userData.userData);
   const isLoggedIn = useSelector((state)=> state.userData.isLoggedIn);
   const userError = useSelector((state) => state.userData.error);
   
 
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const error = useSelector((state)=> state.products.error);
+  const isLoading = useSelector((state)=> state.products.loading);
   const [isOpen, setIsOpen] = useState(false);
   
-  const apiUrl = import.meta.env.VITE_API_URL;
-  useEffect(() => {
-    const getProducts = async () => {
-      fetch(`${import.meta.env.VITE_API_URL}/api/products`, {
-        method: "GET",
-      })
-        .then(async (response) => {
-          const tempProducts = await response.json();
-          setProducts(tempProducts);
 
-          setIsLoading(false);
-          setError("");
-        })
-        .catch(async (e) => {
-          setError(e.message);
-        });
-    };
-    getProducts();
-  }, [apiUrl]);
 
-  useEffect(()=>{
-    dispatch(userAuthenticationRequest())
-  },[dispatch])
+ 
   const handleClick = () => {
     setIsOpen(true);
   };
@@ -56,28 +37,12 @@ const Home = () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     // console.log(formData.get("productImage").files);
-    
-    fetch(`${import.meta.env.VITE_API_URL}/api/products`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: formData.get("name"),
-        description: formData.get("description"),
-        price: formData.get("price"),
-        stock: formData.get("stock"),
-        // productImage:formData.get("productImage"),
-      }),
-    })
-      .then(async (response) => {
-        const tempResponse = await response.json();
-        setProducts(prevProducts => [...prevProducts, tempResponse.product]);
-      })
-      .catch(async (e) => {
-        setError(e.message);
-      });
-
+    const name = formData.get('name')
+    const description = formData.get('description')
+    const price = formData.get('price')
+    const stock = formData.get('stock')
+    const quantity = formData.get('quantity')
+    dispatch(addProductsRequest({name,description,price,stock,quantity}))
     setIsOpen(false);
   };
   // useEffect(()=>{
@@ -100,6 +65,7 @@ const Home = () => {
           
 
           <Modal isOpen={isOpen} title={"Upload Form"} onClose={() => setIsOpen(false)}>
+            {/* <form onSubmit={handleSubmit} className="space-y-4"> */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input label="name" placeholder="Enter Product Name">Name</Input> <br/>
               <Input label="price" placeholder="Enter Product Price" type="Number">Price</Input><br/>

@@ -1,5 +1,5 @@
 import { all } from "redux-saga/effects";
-import { watchAddCartRequest, watchAddOrderRequest, watchCartRequest,watchClearCartRequest,watchDeleteCartRequest, watchFetchOrderRequest, watchUserAuthenticationRequest } from "./Saga";
+import { watchAddCartRequest, watchAddOrderRequest, watchAddProductsRequest, watchCartRequest,watchClearCartRequest,watchDeleteCartRequest, watchFetchOrderRequest, watchFetchProductsRequest, watchUserAuthenticationRequest } from "./Saga";
 
 export default function* watcherSaga() {
     yield all([
@@ -10,5 +10,7 @@ export default function* watcherSaga() {
       watchFetchOrderRequest(),
       watchAddOrderRequest(),
       watchClearCartRequest(),
+      watchFetchProductsRequest(),
+      watchAddProductsRequest(),
     ]);
   }

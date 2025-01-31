@@ -126,3 +126,34 @@ export const addOrderFailure=(error)=>({
     type:ADD_ORDER_FAILURE,
     payload:error,
 })
+
+
+export const FETCH_PRODUCTS_REQUEST = 'FETCH_PRODUCTS_REQUEST'
+export const FETCH_PRODUCTS_SUCCESS = 'FETCH_PRODUCTS_SUCCESS'
+export const FETCH_PRODUCTS_FAILURE = 'FETCH_PRODUCTS_FAILURE'
+export const ADD_PRODUCTS_REQUEST = 'ADD_PRODUCTS_REQUEST'
+export const ADD_PRODUCTS_SUCCESS = 'ADD_PRODUCTS_SUCCESS'
+export const ADD_PRODUCTS_FAILURE = 'ADD_PRODUCTS_FAILURE'
+export const fetchProductsRequest=()=>({
+    type:FETCH_PRODUCTS_REQUEST,
+})
+export const fetchProductsSuccess=(products)=>({
+    type:FETCH_PRODUCTS_SUCCESS,
+    payload:products,
+})
+export const fetchProductsFailure=(error)=>({
+    type:FETCH_PRODUCTS_FAILURE,
+    payload:error,
+})
+export const addProductsRequest=(product)=>({
+    type:ADD_PRODUCTS_REQUEST,
+    payload:product
+})
+export const addProductsSuccess=(products)=>({
+    type:ADD_PRODUCTS_SUCCESS,
+    payload:products,
+})
+export const addProductsFailure=(error)=>({
+    type:ADD_PRODUCTS_FAILURE,
+    payload:error,
+})

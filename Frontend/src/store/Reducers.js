@@ -17,6 +17,12 @@ import {
   CLEAR_CART_REQUEST,
   CLEAR_CART_SUCCESS,
   CLEAR_CART_FAILURE,
+  FETCH_PRODUCTS_REQUEST,
+  FETCH_PRODUCTS_SUCCESS,
+  FETCH_PRODUCTS_FAILURE,
+  ADD_PRODUCTS_REQUEST,
+  ADD_PRODUCTS_SUCCESS,
+  ADD_PRODUCTS_FAILURE,
 } from "./Actions";
 
 import {USER_AUTHENTICATION_REQUEST,USER_AUTHENTICATION_FAILURE,USER_AUTHENTICATION_SUCCESS,} from './Actions'
@@ -66,7 +72,7 @@ export const cartReducer = (state = cartInitialState, action) => {
 };
 const orderInitialState = {
   loading : false,
-  orders : null,
+  orders : [],
   error : ''
 }
 export const OrderReducer = (state = orderInitialState,action) =>{
@@ -102,6 +108,30 @@ export const UserAuthenticationReducer = (state = userDataInitialState , action)
       return {loading:false,userData:action.payload,isLoggedIn:true,error:''}
     case USER_AUTHENTICATION_FAILURE:
       return {loading:false,userData:null,isLoggedIn:false,error:action.payload}
+    default:
+      return state
+  }
+}
+
+const productInitialState = {
+  loading : false,
+  products: [],
+  error:''
+}
+export const productReducer = (state=productInitialState,action) =>{
+  switch (action.type) {
+    case FETCH_PRODUCTS_REQUEST:
+      return {...state,loading:true}
+    case FETCH_PRODUCTS_SUCCESS:
+      return {loading:false,products:action.payload,error:''}
+    case FETCH_PRODUCTS_FAILURE:
+      return {loading:false,products:[],error:action.payload}
+    case ADD_PRODUCTS_REQUEST:
+      return state
+    case ADD_PRODUCTS_SUCCESS:
+      return {loading:false,products:[...state.products , action.payload],error:''}
+    case ADD_PRODUCTS_FAILURE:
+      return {loading:false,products:[],error:action.payload}
     default:
       return state
   }

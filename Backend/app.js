@@ -114,6 +114,10 @@ const OrderSchema = new mongoose.Schema({
   ],
   totalPrice: { type: Number, required: true },
   createdAt : { type: Date, default:Date.now()},
+  status : {
+    type:String,
+    default:"packaging",
+  }
 })
 
 
@@ -142,6 +146,28 @@ app.get('/api/users/info',verifyToken,async(req,res)=>{
   try {
     const info = await UserData.find(req.user.userId);
     res.json(info[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+})
+app.put('/api/users/info',verifyToken,async(req,res)=>{
+  try {
+    const info = await UserData.findOneAndUpdate(
+      { userId: req.body.userId },  
+      {
+        $set: {
+          phone: req.body.phone,
+          street: req.body.street,
+          city: req.body.city,
+          state: req.body.state,
+          country: req.body.country,
+          postalCode: req.body.postalCode,
+        }
+      },
+      {returnDocument: "after"}
+    );
+
+    res.json(info);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

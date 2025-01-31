@@ -1,109 +1,113 @@
-// Sample order data (unchanged)
-const orders = [
-  {
-    id: 1,
-    customer: "John Doe",
-    date: "2023-05-15",
-    items: [
-      { name: "Laptop", quantity: 1, price: 999.99 },
-      { name: "Mouse", quantity: 2, price: 29.99 },
-    ],
-  },
-  {
-    id: 2,
-    customer: "Jane Smith",
-    date: "2023-05-14",
-    items: [
-      { name: "Smartphone", quantity: 1, price: 599.99 },
-      { name: "Phone Case", quantity: 1, price: 19.99 },
-      { name: "Screen Protector", quantity: 2, price: 9.99 },
-    ],
-  },
-  {
-    id: 3,
-    customer: "Bob Johnson",
-    date: "2023-05-13",
-    items: [
-      { name: "Headphones", quantity: 1, price: 149.99 },
-      { name: "Bluetooth Speaker", quantity: 1, price: 79.99 },
-    ],
-  },
-]
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import Navbar from "./components/Navbar";
+
 
 const Order = () => {
-  const calculateTotal = (items) => {
-    return items.reduce((total, item) => total + item.quantity * item.price, 0).toFixed(2)
-  }
-
+  const navigate = useNavigate()
+  const userLoading = useSelector((state) => state.userData.loading);
+  const userData = useSelector((state) => state.userData.userData);
+  const userError = useSelector((state) => state.userData.error);
+  const isLoggedIn = useSelector((state) => state.userData.isLoggedIn);
+  const orderLoading = useSelector((state)=> state.products.loading);
+  const orderData = useSelector((state)=>state.orders.orders);
+  const orderError = useSelector((state)=>state.orders.error);
+  const products = useSelector((state)=> state.products.products);
+  useEffect(() => {
+    if (userLoading) return; // Prevent execution while still fetching data
+    if (!isLoggedIn && !userData && userError) {
+      navigate("/login");
+    }
+  }, [userLoading, navigate, userData, userError, isLoggedIn]);
+  
+  
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    orderError ? <p>{orderError}</p>:
+    <>
+    <Navbar/>
+    <div className="min-h-screen bg-[#101727] flex flex-col">
       {/* Header */}
-      <header className="bg-white shadow">
+      <header className="bg-[#25354b] shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900">Orders</h1>
+          <h1 className="text-3xl font-bold text-white">Orders History</h1>
         </div>
       </header>
 
       {/* Main content */}
       <main className="flex-grow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          {orders.map((order) => (
-            <div key={order.id} className="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+          {!orderLoading && orderData.length > 0 && orderData.map((order) => (
+            <div
+              key={order._id}
+              className="bg-[#1e2a3a] text-white shadow overflow-hidden sm:rounded-lg mb-8"
+            >
               <div className="px-4 py-5 sm:px-6 flex flex-col sm:flex-row justify-between items-start sm:items-center">
                 <div>
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">Order #{order.id}</h3>
-                  <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                    {order.customer} - {order.date}
+                  <h3 className="text-lg leading-6 font-medium ">
+                    Order #{order._id}
+                  </h3>
+                  <p className="mt-1 max-w-2xl text-sm text-gray-200">
+                    {order.createdAt}
                   </p>
                 </div>
                 <div className="mt-2 sm:mt-0 text-left sm:text-right">
-                  <p className="text-sm font-medium text-gray-500">Total</p>
-                  <p className="text-lg font-semibold text-gray-900">${calculateTotal(order.items)}</p>
+                  <p className="text-lg font-semibold text-green-400">
+                    {order.status}
+                  </p>
+                </div>
+                <div className="mt-2 sm:mt-0 text-left sm:text-right">
+                  <p className="text-sm font-medium text-gray-200">Total</p>
+                  <p className="text-lg font-semibold text-gray-100">
+                    ${order.totalPrice.toFixed(2)}
+                  </p>
                 </div>
               </div>
               <div className="border-t border-gray-200 overflow-x-auto">
                 <div className="min-w-full inline-block align-middle">
                   <div className="overflow-hidden">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
+                    <table className="min-w-full divide-y divide-gray-500">
+                      <thead className="bg-[#1e2a3a]">
                         <tr>
                           <th
                             scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider whitespace-nowrap"
                           >
                             Item
                           </th>
                           <th
                             scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider whitespace-nowrap"
                           >
                             Quantity
                           </th>
                           <th
                             scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider whitespace-nowrap"
                           >
                             Price
                           </th>
                           <th
                             scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider whitespace-nowrap"
                           >
                             Subtotal
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
+                      <tbody className="bg-[#1e2a3a] divide-y divide-gray-700">
                         {order.items.map((item, index) => (
                           <tr key={index}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {item.name}
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100">
+                              {products.find(product => product._id === item.productId).name}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-2s00">
+                              {item.quantity}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-2s00">
                               ${item.price.toFixed(2)}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-2s00">
                               ${(item.quantity * item.price).toFixed(2)}
                             </td>
                           </tr>
@@ -118,15 +122,9 @@ const Order = () => {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white shadow mt-auto">
-        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-gray-500">© 2023 Your Company. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
-  )
-}
+    </>
+  );
+};
 
-export default Order
-
+export default Order;

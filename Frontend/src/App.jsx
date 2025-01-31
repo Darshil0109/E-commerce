@@ -9,9 +9,25 @@ import Profile from './pages/Profile';
 import Services from './pages/Services';
 import Contact from './pages/Contact';
 import Order from './Order';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { fetchOrderRequest, fetchProductsRequest, userAuthenticationRequest } from './store/Actions';
 
 
 const App = () => {
+  const userData = useSelector((state) => state.userData.userData);
+  
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(userAuthenticationRequest());
+    dispatch(fetchProductsRequest())
+  }, [dispatch]);
+  useEffect(()=>{
+    if (userData?.id) {
+      dispatch(fetchOrderRequest(userData.id))
+    }
+  },[dispatch,userData])
+  
   return (
     <>
       <Routes>

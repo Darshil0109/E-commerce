@@ -1,10 +1,10 @@
-import { ShoppingCart, X, UserRound, UserPen } from "lucide-react";
+import { ShoppingCart, X, UserRound, UserPen,Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Modal from "../Modal";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../Button";
-import { addOrderRequest, deleteCartRequest, fetchOrderRequest, userAuthenticationRequest } from "../store/Actions";
+import { addOrderRequest, deleteCartRequest, fetchOrderRequest } from "../store/Actions";
 import { toast } from "react-toastify";
 
 function Navbar() {
@@ -20,9 +20,6 @@ function Navbar() {
     setIsCartOpen(true);
   };
   const isLoggedIn = useSelector((state) => state.userData.isLoggedIn);
-  useEffect(() => {
-    dispatch(userAuthenticationRequest());
-  }, [dispatch]);
   
   const apiUrl = import.meta.env.VITE_API_URL;
   useEffect(() => {
@@ -203,19 +200,20 @@ function Navbar() {
                       <p className="font-semibold">{product?.name}</p>
                       <p className="text-gray-600">{product?.description}</p>
                       <p>Quantity: {item?.quantity}</p>
-                      <p className="text-green-500">${product?.price}</p>
+                      <p className="">Price: ${product?.price}</p>
                       {calculateTotal(product?.price * item?.quantity)}
-                      {item.price = product?.price}
+                      <p className="hidden">{item.price = product?.price}</p>
                     </div>
 
                     <Button
-                      className="bg-red-500 text-white px-3 py-1 rounded"
+                      className=" text-white px-3 py-1 rounded"
+                      backgroundColor="#fb2c36"
                       onClick={() => {
                         product.userId = userData.id;
                         dispatch(deleteCartRequest(product));
                       }}
                     >
-                      Remove
+                      <Trash2/>
                     </Button>
                   </div>
                 );
@@ -226,6 +224,7 @@ function Navbar() {
           </div>
           <Button
             className="bg-green-500 text-white px-3 py-1 rounded"
+            backgroundColor=""
             onClick={() => {
               if (cartData.length === 0) {
                 toast.error('No Products in cart',{
