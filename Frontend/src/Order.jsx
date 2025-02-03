@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 
 
+
 const Order = () => {
+  
   const navigate = useNavigate()
   const userLoading = useSelector((state) => state.userData.loading);
   const userData = useSelector((state) => state.userData.userData);
@@ -26,13 +28,7 @@ const Order = () => {
     orderError ? <p>{orderError}</p>:
     <>
     <Navbar/>
-    <div className="min-h-screen bg-[#101727] flex flex-col">
-      {/* Header */}
-      <header className="bg-[#25354b] shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-white">Orders History</h1>
-        </div>
-      </header>
+    <div className="min-h-screen flex flex-col">
 
       {/* Main content */}
       <main className="flex-grow">
@@ -40,14 +36,14 @@ const Order = () => {
           {!orderLoading && orderData.length > 0 && orderData.map((order) => (
             <div
               key={order._id}
-              className="bg-[#1e2a3a] text-white shadow overflow-hidden sm:rounded-lg mb-8"
+              className="bg-gray-50 border border-gray-200 shadow overflow-hidden sm:rounded-lg mb-8"
             >
               <div className="px-4 py-5 sm:px-6 flex flex-col sm:flex-row justify-between items-start sm:items-center">
                 <div>
                   <h3 className="text-lg leading-6 font-medium ">
                     Order #{order._id}
                   </h3>
-                  <p className="mt-1 max-w-2xl text-sm text-gray-200">
+                  <p className="mt-1 max-w-2xl text-sm ">
                     {order.createdAt}
                   </p>
                 </div>
@@ -57,8 +53,8 @@ const Order = () => {
                   </p>
                 </div>
                 <div className="mt-2 sm:mt-0 text-left sm:text-right">
-                  <p className="text-sm font-medium text-gray-200">Total</p>
-                  <p className="text-lg font-semibold text-gray-100">
+                  <p className="text-sm font-medium ">Total</p>
+                  <p className="text-lg font-semibold ">
                     ${order.totalPrice.toFixed(2)}
                   </p>
                 </div>
@@ -67,38 +63,38 @@ const Order = () => {
                 <div className="min-w-full inline-block align-middle">
                   <div className="overflow-hidden">
                     <table className="min-w-full divide-y divide-gray-500">
-                      <thead className="bg-[#1e2a3a]">
+                      <thead className="">
                         <tr>
                           <th
                             scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider whitespace-nowrap"
+                            className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider whitespace-nowrap"
                           >
                             Item
                           </th>
                           <th
                             scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider whitespace-nowrap"
+                            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider whitespace-nowrap"
                           >
                             Quantity
                           </th>
                           <th
                             scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider whitespace-nowrap"
+                            className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider whitespace-nowrap"
                           >
                             Price
                           </th>
                           <th
                             scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider whitespace-nowrap"
+                            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider whitespace-nowrap"
                           >
                             Subtotal
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="bg-[#1e2a3a] divide-y divide-gray-700">
+                      <tbody className=" divide-y divide-gray-700">
                         {order.items.map((item, index) => (
                           <tr key={index}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-2s00">
                               {products.find(product => product._id === item.productId).name}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-2s00">

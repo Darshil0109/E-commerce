@@ -1,26 +1,13 @@
-
-import { Facebook, Twitter, Instagram } from "lucide-react"
 import { Link } from "react-router-dom"
 
 function Footer() {
   return (
-    <footer className="bg-gray-800 text-white dark:bg-gray-900 py-8">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-wrap justify-between">
+    <footer className="bg-white text-black">
+      <div className="container mx-auto px-4 ">
+        <div className="flex flex-wrap justify-between border-t border-gray-700 pt-8">
           <div className="w-full md:w-1/3 mb-6 md:mb-0">
             <h3 className="text-xl font-bold mb-4">EShop</h3>
             <p className="mb-4">shop for amazing products.</p>
-            <div className="flex space-x-4">
-              <Link to="/" className="hover:text-blue-400">
-                <Facebook />
-              </Link>
-              <Link to="/" className="hover:text-blue-400">
-                <Twitter />
-              </Link>
-              <Link to="/" className="hover:text-blue-400">
-                <Instagram />
-              </Link>
-            </div>
           </div>
           <div className="w-full md:w-1/3 mb-6 md:mb-0">
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>

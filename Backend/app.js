@@ -13,7 +13,8 @@ const cookieParser = require('cookie-parser');
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cookieParser())
+app.use(cookieParser());
+app.use('/uploads',express.static('uploads'))
 app.use(cors({
   origin: process.env.ALLOWED_ORIGIN,  // Replace with your frontend URL
   credentials: true  // Allows cookies to be sent
@@ -256,9 +257,11 @@ app.post('/api/products',upload.single('productImage'), async (req, res) => {
   try {
     const { name, price, description, stock } = req.body;
 
-    
-    // const productImage = req.file ? req.file.path : null;
-    const product = new Product({ name, price, description, stock });
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+  }
+    const productImage = req.file ? req.file.path : null;
+    const product = new Product({ name, price, description, stock ,productImage });
     // const product = new Product({ name, price, description, stock,productImage });
     await product.save();
     res.status(201).json({ message: 'Product added successfully',product:product });

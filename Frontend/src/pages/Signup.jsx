@@ -53,11 +53,11 @@ const Signup = () => {
 
     }
   return (
-    <div><div className="min-h-screen flex items-center justify-center bg-[#101727]">
-    <div className="p-8 rounded-lg shadow-md w-96 bg-[#1e2a3a]">
-      <h2 className="text-2xl font-bold mb-6 text-center text-white">Sign Up</h2>
+    <div><div className="min-h-screen flex items-center bg-gray-50 justify-center ">
+    <div className="p-8 rounded-lg shadow-md w-96 bg-white">
+      <h2 className="text-2xl font-bold mb-6 text-center ">Sign Up</h2>
       <form onSubmit={handleSignup} method="POST">
-        <div className="mb-4 text-white">
+        <div className="mb-4 ">
           <label htmlFor="name" className="block text-sm font-medium mb-1">
             Full Name
           </label>
@@ -69,7 +69,7 @@ const Signup = () => {
             required
           />
         </div>
-        <div className="mb-4 text-white">
+        <div className="mb-4 ">
           <label htmlFor="email" className="block text-sm font-medium mb-1">
             Email
           </label>
@@ -81,7 +81,7 @@ const Signup = () => {
             required
           />
         </div>
-        <div className="mb-6 relative text-white">
+        <div className="mb-6 relative ">
             <label
               htmlFor="password"
               className="block text-sm font-medium mb-1"
@@ -98,14 +98,14 @@ const Signup = () => {
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-2 flex items-center"
+                className="absolute inset-y-0 right-2 flex items-center text-gray-700"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
           </div>
-          <div className="mb-6 relative text-white">
+          <div className="mb-6 relative">
             <label
               htmlFor="confirmPassword"
               className="block text-sm font-medium mb-1"
@@ -122,7 +122,7 @@ const Signup = () => {
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-2 flex items-center"
+                className="absolute inset-y-0 right-2 flex items-center text-gray-700"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -138,9 +138,9 @@ const Signup = () => {
             className="h-4 w-4 focus:ring-blue-500 border-gray-300 rounded"
             required
           />
-          <label htmlFor="terms" className="ml-2 block text-sm ">
+          <label htmlFor="terms" className="text-black ml-2 block text-sm ">
             I agree to the{" "}
-            <Link to="#" className="text-[#0ee6c9] hover:underline">
+            <Link to="#" className="text-[#850ee6] hover:underline">
               Terms and Conditions
             </Link>
           </label>
@@ -153,9 +153,9 @@ const Signup = () => {
           Sign Up
         </button>
       </form>
-      <p className="mt-4 text-center text-sm text-white">
+      <p className="mt-4 text-center text-sm ">
         Already have an account?{" "}
-        <Link to="/login" className="text-[#0ee6c9] hover:underline">
+        <Link to="/login" className="text-[#850ee6] hover:underline">
           Log in
         </Link>
       </p>

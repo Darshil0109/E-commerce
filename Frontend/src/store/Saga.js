@@ -38,7 +38,7 @@ function* addCartData(action) {
   try {
     const cart = yield call(addCart,action.payload)
     toast.success("Added to Cart!", {
-      position: "top-right",
+      position: "top-center",
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -64,7 +64,7 @@ function* deleteCartData(action){
     try {
       const deletedProduct = yield call(deleteProduct,action.payload)
       toast.warn('Item removed from cart!', {
-        position: "top-right",
+        position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -93,7 +93,7 @@ function* clearCartData(action){
     try {
       const cart = yield call(clearCart,action.payload)
       toast.success('Order Placed', {
-        position: "top-right",
+        position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -215,7 +215,8 @@ const addProducts = async(product) =>{
     description:product.description,
     price:product.price,
     stock:product.stock,
-  })
+    productImage : product.productImage,
+  },{headers:{'Content-Type': 'multipart/form-data'}})
   return products.data.product
 }
 

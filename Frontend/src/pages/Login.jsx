@@ -35,7 +35,7 @@ const Login = () => {
     );
     if (response.data.token) {
       toast.success("Login Successfully", {
-        position: "top-right",
+        position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -58,15 +58,15 @@ const Login = () => {
     }
   };
   return (
-    <div className=" bg-[#101727] min-h-screen flex items-center justify-center">
+    <div className=" min-h-screen flex items-center bg-gray-50 justify-center">
       {" "}
-      <div className="bg-[#1e2a3a] p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl text-white font-bold mb-6 text-center">Login</h2>
+      <div className="bg-white p-8 rounded-lg shadow-md w-96">
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
         <form onSubmit={handleLogin} method="POST">
-          <div className="mb-4 text-white">
+          <div className="mb-4 ">
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-white mb-1"
+              className="block text-sm font-medium  mb-1"
             >
               Email
             </label>
@@ -78,7 +78,7 @@ const Login = () => {
               required
             />
           </div>
-          <div className="mb-6 relative text-white">
+          <div className="mb-6 relative ">
             <label
               htmlFor="password"
               className="block text-sm font-medium mb-1"
@@ -95,7 +95,7 @@ const Login = () => {
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-2 flex items-center text-white"
+                className="absolute inset-y-0 right-2 flex items-center text-gray-700"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -104,14 +104,14 @@ const Login = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="w-full bg-blue-500 text-gray-50 py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Sign In
           </button>
         </form>
-        <p className="mt-4 text-center text-sm text-white">
+        <p className="mt-4 text-center text-sm">
           Not have an account?{" "}
-          <Link to="/signup" className="text-[#0ee6c9] hover:underline">
+          <Link to="/signup" className="text-[#7d22f3] hover:underline">
             Sign Up
           </Link>
         </p>

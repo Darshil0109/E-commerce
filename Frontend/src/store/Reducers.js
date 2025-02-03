@@ -23,6 +23,7 @@ import {
   ADD_PRODUCTS_REQUEST,
   ADD_PRODUCTS_SUCCESS,
   ADD_PRODUCTS_FAILURE,
+  UPDATE_QUANTITY,
 } from "./Actions";
 
 import {USER_AUTHENTICATION_REQUEST,USER_AUTHENTICATION_FAILURE,USER_AUTHENTICATION_SUCCESS,} from './Actions'
@@ -66,6 +67,8 @@ export const cartReducer = (state = cartInitialState, action) => {
         return {loading:false,cart: [],error:null};
     case CLEAR_CART_FAILURE:
       return { loading: false, cart: null, error: action.payload };
+    case UPDATE_QUANTITY:
+      return {...state,cart : state.cart.map(item => item._id === action.payload.id ? {...item , quantity:action.payload.quantity} : item)}
     default:
       return state;
   }

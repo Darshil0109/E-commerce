@@ -1,26 +1,29 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import Navbar from "../components/Navbar";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import Button from "../Button";
 import { toast } from "react-toastify";
 import Modal from "../Modal";
 import Input from "../Input";
-import { LogOut } from "lucide-react";
+import { ChevronDown, LogOut, Mail, Phone } from "lucide-react";
+import { userAuthenticationRequest } from "../store/Actions";
 
 // import { fetchOrderRequest } from "../store/Actions";
 
 const Profile = () => {
   const navigate = useNavigate();
-  
+  const dispatch = useDispatch();
   const handleLogout = () => {
     // Remove the token from cookies
+    navigate("/");
     Cookies.remove("token"); // Adjust 'token' if your cookie name is different
+    dispatch(userAuthenticationRequest())
     // Navigate to the root URL
     toast.error("Logged Out", {
-      position: "top-right",
+      position: "top-center",
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -28,7 +31,6 @@ const Profile = () => {
       draggable: true,
       progress: undefined,
     });
-    navigate("/");
   };
   
   const [userInfo, setUserInfo] = useState([]);
@@ -37,7 +39,8 @@ const Profile = () => {
   const userData = useSelector((state) => state.userData.userData);
   const userError = useSelector((state) => state.userData.error);
   const isLoggedIn = useSelector((state) => state.userData.isLoggedIn);
-  
+  const orderLoading = useSelector((state)=> state.products.loading);
+  const orderData = useSelector((state)=>state.orders.orders);
   // const orderLoading = useSelector((state)=>state.orders.loading);
   // const orderData = useSelector((state)=>state.orders.orders);
   // const orderError = useSelector((state)=>state.orders.error);
@@ -88,7 +91,6 @@ const Profile = () => {
     setIsprofileModalOpen(false)
   }
 
-
   return (
     <>
       <Navbar />
@@ -108,36 +110,25 @@ const Profile = () => {
 
           </form>
       </Modal>
-      <div className="h-full mx-auto p-4 bg-[#101727] text-white">
-        <h1 className="text-3xl font-bold mb-6 ">Profile</h1>
+      <div className="h-full mx-auto p-4">
         {userLoading && <>Loading...</>}
         {userError && <>{userError}</>}
         {!userLoading && userError === "" && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-5 mb-5">
-              <div className="bg-[#1e2a3a] shadow rounded-lg p-6">
+          <div className="flex flex-col sm:flex-row justify-between mx-5 sm:gap-4">
+            <div className="gap-6 mt-5 mb-5 sm:w-[30%]">
+              <div className="bg-gray-50 shadow rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-4">
                   Personal Information
                 </h2>
-                <p>{userData?.name}</p>
+                <p >{userData?.name}</p>
+                <p className="flex gap-1 items-center"><Mail className="h-4 w-4"/>{userData?.email}</p>
+                <p  className="flex gap-1 items-center"><Phone className="h-4 w-4"/>{userInfo?.phone ? userInfo.phone : "Not Available"}</p>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-5 mb-5">
-              <div className="bg-[#1e2a3a] shadow rounded-lg p-6">
-                <h2 className="text-xl font-semibold mb-4">
-                  Contact Information
-                </h2>
-                <p>
-                  <strong>Email:</strong> {userData?.email}
-                </p>
-                <p>
-                  <strong>Phone:</strong>{" "}
-                  {userInfo?.phone ? userInfo.phone : "Not Available"}
-                </p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-5 mb-5">
-              <div className="bg-[#1e2a3a] shadow rounded-lg p-6 lg:col-span-2">
+            
+            <div className="gap-6 sm:mt-5 mb-5 sm:w-[70%]">
+              <div className="bg-gray-50 shadow rounded-lg p-6 lg:col-span-2">
                 <h2 className="text-xl font-semibold mb-4">
                   Address Information
                 </h2>
@@ -163,31 +154,72 @@ const Profile = () => {
                   </>
                 )}
               </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-5 mb-5">
-              <div className="bg-[#1e2a3a] shadow rounded-lg p-6 ">
-                <h2 className="text-xl font-semibold mb-4">
-                  Login Information
-                </h2>
-                <p>
-                  <strong>Last Login:</strong>{" "}
-                  {userInfo?.lastLogin ? userInfo.lastLogin : "Not Available"}
-                </p>
+              <div className="gap-6 mt-5 mb-5">
+                <div className="bg-gray-50 shadow rounded-lg p-6 ">
+                  <h2 className="text-xl font-semibold mb-4">
+                    Login Information
+                  </h2>
+                  <p>
+                    <strong>Last Login:</strong>{" "}
+                    {userInfo?.lastLogin ? userInfo.lastLogin : "Not Available"}
+                  </p>
+                </div>
               </div>
+              <div className="gap-6 mt-5 mb-5">
+                <div className="bg-gray-50 shadow rounded-lg p-6">
+                  <h2 className="text-xl font-semibold mb-4">Order History</h2>
+                  <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 ">
+                      <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
+                      <tr>
+                        <th scope="col" className="px-6 py-3">
+                            Order id
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Order Status
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Total Price
+                        </th>
+                    </tr>
+                      </thead>
+                      <tbody>
+                        {
+                        (!orderLoading && orderData.length === 0 )? <tr><td colSpan={3}>No order available</td></tr> : 
+                          !orderLoading && orderData.slice(0,3).map(item => {
+                            return(<tr key={item._id} className="odd:bg-white even:bg-gray-50 border-b  border-gray-200">
+                              <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                  #{item._id}
+                              </th>
+                              <th className="px-6 py-4">
+                                  {item.status}
+                              </th>
+                              <th className="px-6 py-4">
+                                  {item.totalPrice}
+                              </th>
+                            </tr>)
+                          })
+                        }
+                        <tr className="h-12 cursor-pointer w-full text-gray-700 font-semibold text-center"><td colSpan={3}><Link to={'/orders'} className="flex items-center justify-center gap-2">View More <ChevronDown/></Link></td></tr>
+                        </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            <div className="p-2 flex gap-8">
+              <Button
+                onClick={handleLogout}
+                backgroundColor="#ff0000"
+                className="h-16 w-32 "
+              >
+                <div className="flex gap-2">LogOut<LogOut/></div>
+              </Button>
+              <Button onClick={()=>{setIsprofileModalOpen(true)}} backgroundColor="#0f0f0f" className="h-16 w-32 mt-16">Edit Profile</Button>
+            </div>
+          </div>
             </div>
           </>
         )}
-        <div className="p-2 flex gap-8">
-          <Button
-            onClick={handleLogout}
-            backgroundColor="#ff0000"
-            className="h-16 w-32 "
-          >
-            <div className="flex gap-2">LogOut<LogOut/></div>
-          </Button>
-          <Button onClick={()=>{navigate('/orders')}} backgroundColor="" className="bg-green-700 h-16 w-32 mt-16">Check Orders</Button>
-          <Button onClick={()=>{setIsprofileModalOpen(true)}}  className="h-16 w-32 mt-16">Edit Profile</Button>
-        </div>
       </div>
     </>
   );

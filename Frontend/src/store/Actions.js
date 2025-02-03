@@ -32,7 +32,12 @@ export const DELETE_CART_FAILURE = 'DELETE_CART_FAILURE'
 export const CLEAR_CART_REQUEST = 'CLEAR_CART_REQUEST'
 export const CLEAR_CART_SUCCESS = 'CLEAR_CART_SUCCESS'
 export const CLEAR_CART_FAILURE = 'CLEAR_CART_FAILURE'
+export const UPDATE_QUANTITY = 'UPDATE_QUANTITY'
 
+export const updateProductQuantity = (id, quantity)=>({
+    type:UPDATE_QUANTITY,
+    payload:{id,quantity}
+})
 
 //cart 
 export const fetchCartRequest = (userID) =>({
