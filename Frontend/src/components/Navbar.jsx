@@ -6,9 +6,10 @@ import {
   Minus,
   Plus,
   X,
+  Search,
 } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../Button";
 import {
@@ -20,6 +21,7 @@ import {
 import { toast } from "react-toastify";
 
 function Navbar() {
+  const [isSearchVisible, setIsSearchVisible] = useState(window.innerWidth >= 640 ? true : false)
   const userData = useSelector((state) => state.userData.userData);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -61,6 +63,39 @@ function Navbar() {
   const handleQuantityChange = (id,change)=>{
     dispatch(updateProductQuantity(id,change))
   }
+  const searchRef = useRef(null)
+  const searchRefMobile = useRef(null)
+  const [searchString,setSearchString] = useState('')
+  const [searchResult,setSearchResult] = useState([])
+  const navigate = useNavigate()
+  const searchProducts = (name) =>{
+    let uniqueProductNames = new Set();
+    let uniqueSearchResult = []
+    let result = []
+    if (name === ""){
+      setSearchResult(result)
+    }
+    else{
+      result = products.filter(item => item.name.toLowerCase().includes(name.toLowerCase()))
+      result.forEach(obj => {
+        const name = obj.name;
+        if(!uniqueProductNames.has(name)){
+          uniqueProductNames.add(name);
+          uniqueSearchResult.push(obj)
+        }
+      })
+    }
+    setSearchResult(uniqueSearchResult)
+  }
+  window.addEventListener('resize',()=>{
+    if (window.innerWidth < 640 && isSearchVisible){
+      setIsSearchVisible(false)
+    }
+    else if(window.innerWidth >= 640 && !isSearchVisible){
+      setIsSearchVisible(true)
+    }
+  })
+  const [isSearchFocused,setIsSearchFocused] = useState(false)
   
   return (
     <>
@@ -87,8 +122,65 @@ function Navbar() {
             ))}
           </div>
 
+
           {/* Right Section */}
           <div className="flex items-center space-x-6">
+            <div className="relative flex items-center">
+              <div
+                className={`${isSearchVisible ? "hidden sm:flex w-32 md:w-40 " : "w-0"} overflow-hidden transition-all duration-300 ease-in-out`}
+              >
+                <input
+                  onChange={(e)=>{
+                    setSearchString(e.target.value)
+                    searchProducts(e.target.value)}}
+                  onKeyDown={(e)=>{
+                    if (e.key === 'Enter'){
+                      navigate(`/search/${searchString}`)
+                      if (window.innerWidth < 640){
+                        setIsSearchVisible(false)
+                        searchRefMobile.current.blur()  //remove focus on element
+                      }
+                      else{
+                        searchRef.current.blur()
+                      }
+                    }
+                  }}
+                  type="text"
+                  ref={searchRef}
+                  onFocus={()=>setIsSearchFocused(true)}
+                  onBlur = {()=>setIsSearchFocused(false)}
+                  value={searchString}
+                  placeholder="Search..."
+                  className="bg-transparent text-black px-2 py-1 text-sm border-b border-gray-300 focus:outline-none focus:border-blue-500 w-full"
+                />
+              </div>
+              <button onClick={()=>{
+                if (isSearchVisible && searchString!== '') {
+                  navigate(`/search/${searchString}`)
+                  if (window.innerWidth < 640){
+                    setIsSearchVisible(false)
+                    setIsSearchFocused(false)
+                    searchRefMobile.current.blur() // remove focus from input
+                  }
+                  else{
+                    searchRef.current.blur() // remove focus from input
+                  }
+                }
+                else{
+                  if (window.innerWidth >= 640) {
+                    searchRef.current.focus()
+                  }
+                  else {
+                    setIsSearchFocused(true)
+                    searchRefMobile.current.focus()
+                  }
+                  setIsSearchVisible(true)
+                }
+              }} className="text-black" aria-label="Toggle search">
+                <Search className="h-6 w-6" />
+              </button>
+            </div>
+            
             <Link
               to="/login"
               className={`${
@@ -110,6 +202,7 @@ function Navbar() {
               className="hover:text-gray-600 transition-colors relative"
             >
               <ShoppingBag />
+              <div className={`${(cartData.length === 0) ? 'hidden' : 'inline-flex'} absolute items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900`}>{cartData.length}</div>
             </Link>
 
             {/* Mobile Menu Button */}
@@ -133,8 +226,9 @@ function Navbar() {
               </svg>
             </button>
           </div>
+          
         </div>
-
+        
         {/* Mobile Sidebar */}
         <div
           className={`fixed inset-y-0 right-0 w-64 bg-white shadow-lg transform ${
@@ -185,6 +279,30 @@ function Navbar() {
         )}
       </nav>
       <div
+        className={`${isSearchVisible ? "flex sm:hidden w-full bg-white h-16 md:w-40 translate-y-0" : "-translate-y-12 z-[-10]"} absolute overflow-hidden transition-all duration-300 ease-out`}
+      >
+        <input
+          onChange={(e)=>
+            {
+              setSearchString(e.target.value)
+              searchProducts(e.target.value)
+            }
+          }
+          type="text"
+          ref={searchRefMobile}
+          value={searchString}
+          placeholder="Search..."
+          className="sm:hidden bg-transparent text-black px-5 sm:px-2 py-1 text-sm border-b border-gray-300 focus:outline-none focus:border-blue-500 w-full"
+        />
+      </div>
+      <div className={`${isSearchFocused ? "flex" : "hidden"} ${searchResult.length === 0 ? "hidden" : ''} absolute top-32 left-0 right-0 w-full sm:w-96 sm:top-20 sm:left-[50%] z-10 sm:right-10 bg-white shadow-lg rounded-lg p-4 mx-auto`}>
+          <ul className="mt-2 w-full flex flex-col">
+            {searchResult.map((result, index) => (
+              <Link to={`/search/${result.name}`} onClick={()=>setIsSearchVisible(false)} key={index} className="py-1 w-full hover:bg-gray-100 cursor-pointer px-4 sm:px-2">{result.name}</Link>
+            ))}
+          </ul>
+        </div>
+      <div
         className={`fixed right-0 top-0 h-full w-80 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-50 ${
           isCartOpen ? "translate-x-0" : "translate-x-full"
         }`}
@@ -234,7 +352,7 @@ function Navbar() {
                         <button
                           // onClick={() => updateQuantity(item.id, -1)}
                           className={`p-1 hover:bg-gray-100 rounded ${item.quantity <= 1? 'text-gray-400' : ''}`}
-                          onClick={()=>handleQuantityChange(item._id,item.quantity - 1)}
+                          onClick={()=>{item.quantity === 1 ? '': handleQuantityChange(item._id,item.quantity - 1)}}
                         >
                           <Minus
                             className="w-4 h-4"

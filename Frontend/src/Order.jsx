@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 
 
@@ -119,6 +120,7 @@ const Order = () => {
       </main>
 
     </div>
+    <Footer/>
     </>
   );
 };

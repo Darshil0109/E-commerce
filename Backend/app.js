@@ -82,7 +82,14 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + path.extname(file.originalname));  // Generate unique filename
   }
 });
-const upload = multer({ storage });
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/png') {
+      cb(null, true);
+  } else {
+      return cb(new Error('Only PNG files are allowed!'), false);
+  }
+};
+const upload = multer({ storage,fileFilter:fileFilter });
 
 
 const CartSchema = new mongoose.Schema({
@@ -259,7 +266,7 @@ app.post('/api/products',upload.single('productImage'), async (req, res) => {
 
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
-  }
+    }
     const productImage = req.file ? req.file.path : null;
     const product = new Product({ name, price, description, stock ,productImage });
     // const product = new Product({ name, price, description, stock,productImage });

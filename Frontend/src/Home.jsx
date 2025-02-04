@@ -11,8 +11,12 @@ import {
   userAuthenticationRequest,
 } from "./store/Actions";
 import Navbar from "./components/Navbar";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import Footer from "./components/Footer";
 
 const Home = () => {
+  const navigate = useNavigate()
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products.products);
   const userLoading = useSelector((state) => state.userData.loading);
@@ -38,18 +42,30 @@ const Home = () => {
     const stock = formData.get("stock");
     const quantity = formData.get("quantity");
     const productImage = formData.get("productImage");
-
-    dispatch(
-      addProductsRequest({
-        name,
-        description,
-        price,
-        stock,
-        quantity,
-        productImage,
-      })
-    );
-    setIsOpen(false);
+    if (productImage.type !== "image/png"){
+      toast.error("Only .png Files are allowed", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+    else{
+      dispatch(
+        addProductsRequest({
+          name,
+          description,
+          price,
+          stock,
+          quantity,
+          productImage,
+        })
+      );
+      setIsOpen(false);
+    }
   };
   // useEffect(()=>{
   //   console.log(products);
@@ -62,17 +78,35 @@ const Home = () => {
     const item = cartData.filter(cartItem => cartItem.productId === id)
     return item.length > 0 ? true : false
   }
+  
+  
   return (
     <>
       <Navbar />
       <div className="container mx-auto p-4">
-        {userError ? (
-          <p className="text-red-500">{error}</p>
-        ) : !userLoading && !isLoading ? (
+        {
+          userError && <p className="text-red-500">{error}</p>}
+        {(!userLoading && !isLoading) ? (
           <>
             <div className="flex justify-center gap-4 mb-6">
               <Button
-                onClick={handleClick}
+                onClick={()=>{
+                  if (!isLoggedIn) {
+                    toast.error("Please Login to Add Products", {
+                      position: "top-center",
+                      autoClose: 3000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                    });
+                    // navigate('/login')
+                  }
+                  else{
+                    handleClick()
+                  }
+                }}
                 className=" text-white px-4 py-2 rounded"
                 backgroundColor="#000000"
               >
@@ -95,6 +129,7 @@ const Home = () => {
                   label="price"
                   placeholder="Enter Product Price"
                   type="Number"
+                  step="0.01"
                 >
                   Price
                 </Input>
@@ -132,11 +167,11 @@ const Home = () => {
             </Modal>
 
             {!isLoading && products.length > 0 ? (
-              <div className="flex flex-wrap gap-2 mx-4">
+              <div className="flex flex-wrap gap-2 justify-center">
                 {products.map((product) => (
-                  <div key={product._id} className="max-w-xs mx-auto">
+                  <div key={product._id} className="max-w-xs mx-auto ">
                     <div className="group relative my-4 ">
-                        <div className="relative aspect-square overflow-hidden mt-12">
+                        <div className="relative aspect-square overflow-hidden mt-12 cursor-pointer">
                           <img
                             src={`${import.meta.env.VITE_API_URL}/${product.productImage}`}
                             alt={`${product.name}`}
@@ -147,14 +182,28 @@ const Home = () => {
                           <div className="absolute bottom-0 left-0 right-0 translate-y-full opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                             <button
                               onClick={() => {
-                                dispatch(
-                                  addCartRequest({
-                                    userId: userData.id,
-                                    productId: product._id,
-                                    quantity: 1,
-                                    price: product.price,
-                                  })
-                                );
+                                if (!isLoggedIn) {
+                                  toast.error("Please Login to Add to Cart", {
+                                    position: "top-center",
+                                    autoClose: 3000,
+                                    hideProgressBar: false,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                    progress: undefined,
+                                  });
+                                  // navigate('/login')
+                                }
+                                else{
+                                  dispatch(
+                                    addCartRequest({
+                                      userId: userData.id,
+                                      productId: product._id,
+                                      quantity: 1,
+                                      price: product.price,
+                                    })
+                                  );
+                                }
                               }}
                               className={`w-full text-white py-3 px-4 text-sm  transition-colors ${checkInCart(product._id) ? 'bg-gray-600' : 'bg-black hover:bg-gray-800'}`}
                               disabled = {checkInCart(product._id)}
@@ -181,6 +230,7 @@ const Home = () => {
           <p className="text-center">Loading....</p>
         )}
       </div>
+      <Footer />
     </>
   );
 };

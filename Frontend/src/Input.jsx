@@ -1,11 +1,11 @@
 import './Input.css'
 import PropTypes from 'prop-types'
-const Input = ({label,placeholder,children,type='text',className=''}) => {
+const Input = ({label,placeholder,children,step='',type='text',className=''}) => {
     
   return (
     <>
         <label htmlFor={children}>{children}</label>
-        <input type={type} name={label} id={children} className={`input ${className}`} placeholder={placeholder}/>
+        <input type={type} step={step} name={label} id={children} className={`input ${className}`} placeholder={placeholder}/>
     </>
   )
 }
@@ -15,6 +15,7 @@ Input.propTypes = {
     type : PropTypes.string,
     className : PropTypes.string,
     children : PropTypes.node.isRequired ,
+    step : PropTypes.string
 }
 
 export default Input

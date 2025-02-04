@@ -12,6 +12,7 @@ import Order from './Order';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { fetchOrderRequest, fetchProductsRequest, userAuthenticationRequest } from './store/Actions';
+import SearchResult from './pages/SearchResult';
 
 
 const App = () => {
@@ -32,6 +33,7 @@ const App = () => {
     <>
       <Routes>
           <Route path="/" element={<Landing />}></Route>
+          <Route path="/search/:productName" element={<SearchResult />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/products" element={<Home />}></Route>

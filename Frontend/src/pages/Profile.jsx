@@ -186,7 +186,7 @@ const Profile = () => {
                       <tbody>
                         {
                         (!orderLoading && orderData.length === 0 )? <tr><td colSpan={3}>No order available</td></tr> : 
-                          !orderLoading && orderData.slice(0,3).map(item => {
+                          !orderLoading && orderData?.slice(0,3).map(item => {
                             return(<tr key={item._id} className="odd:bg-white even:bg-gray-50 border-b  border-gray-200">
                               <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                   #{item._id}
