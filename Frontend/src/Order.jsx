@@ -26,15 +26,15 @@ const Order = () => {
   
   
   return (
-    orderError ? <p>{orderError}</p>:
-    <>
+    orderError ? <div className="flex flex-col min-h-screen"><p className="flex-grow">{orderError}</p></div>:
+    <div className="flex flex-col min-h-screen">
     <Navbar/>
-    <div className="min-h-screen flex flex-col">
+    <div className="flex-grow">
 
       {/* Main content */}
       <main className="flex-grow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          {!orderLoading && orderData.length > 0 && orderData.map((order) => (
+        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 ">
+          {(!orderLoading && orderData.length > 0)? orderData.sort((a,b)=>new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((order) => (
             <div
               key={order._id}
               className="bg-gray-50 border border-gray-200 shadow overflow-hidden sm:rounded-lg mb-8"
@@ -45,7 +45,7 @@ const Order = () => {
                     Order #{order._id}
                   </h3>
                   <p className="mt-1 max-w-2xl text-sm ">
-                    {order.createdAt}
+                    {new Date(order.createdAt).toLocaleString()}
                   </p>
                 </div>
                 <div className="mt-2 sm:mt-0 text-left sm:text-right">
@@ -115,13 +115,14 @@ const Order = () => {
                 </div>
               </div>
             </div>
-          ))}
+          )) : <div className="flex-grow">No - Orders available</div>
+        }
         </div>
       </main>
 
     </div>
     <Footer/>
-    </>
+    </div>
   );
 };
 

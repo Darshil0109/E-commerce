@@ -169,6 +169,7 @@ const addOrders = async(payload) =>{
     userid : payload.userid,
     items: payload.items,
     price : payload.price,
+    createdAt : payload.createdAt,
   })
   return order.data;
 }

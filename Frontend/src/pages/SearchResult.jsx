@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { toast } from "react-toastify";
@@ -19,18 +19,20 @@ const SearchResult = () => {
   let searchResults = products.filter((item) =>
     item.name.toLowerCase().includes(productName.toLowerCase())
   );
-
+  const navigate = useNavigate()
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="flex items-center ml-10">
-        <h2 className="mt-5 ml-5 font-semibold text-2xl">
-          {searchResults.length}
-        </h2>
-        <h2 className="mt-5 ml-3 font-light text-xl flex items-center gap-2">
-          {`${(searchResults.length === 0 || searchResults.length === 1) ? 'Result':'Results'}`} Found for:{" "}
+      <div className="flex items-center ml-10 flex-grow">
+        <div className="mt-5 ml-3 font-light text-xl flex items-center gap-2 flex-wrap ">
+          <div className="flex items-center gap-2">
+            <h2 className="font-semibold text-2xl">
+              {searchResults.length}
+            </h2>
+            <div>{`${(searchResults.length === 0 || searchResults.length === 1) ? 'Result':'Results'}`} Found for:{" "}</div>
+          </div>
           <p className="font-semibold text-2xl">{`"${productName}"`}</p>
-        </h2>
+        </div>
       </div>
       {searchResults.length === 0 ? <div className="flex justify-center w-full m-[7%] overflow-y-auto"></div>
        : <div></div>}
@@ -41,6 +43,7 @@ const SearchResult = () => {
               <div className="group relative my-4 ">
                 <div className="relative aspect-square overflow-hidden mt-12 cursor-pointer">
                   <img
+                    onClick={()=>navigate(`/product/${product._id}`)}
                     src={`${import.meta.env.VITE_API_URL}/${
                       product.productImage
                     }`}
@@ -74,7 +77,7 @@ const SearchResult = () => {
                           );
                         }
                       }}
-                      className={`w-full text-white py-3 px-4 text-sm  transition-colors ${
+                      className={`w-full text-white py-3 px-4 text-sm  transition-colors cursor-pointer ${
                         checkInCart(product._id)
                           ? "bg-gray-600"
                           : "bg-black hover:bg-gray-800"

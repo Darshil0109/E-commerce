@@ -13,6 +13,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { fetchOrderRequest, fetchProductsRequest, userAuthenticationRequest } from './store/Actions';
 import SearchResult from './pages/SearchResult';
+import ProductDetails from './pages/ProductDetails';
+import About from './pages/About';
+
 
 
 const App = () => {
@@ -33,7 +36,9 @@ const App = () => {
     <>
       <Routes>
           <Route path="/" element={<Landing />}></Route>
+          <Route path="/about" element={<About />}></Route>
           <Route path="/search/:productName" element={<SearchResult />}></Route>
+          <Route path="/product/:productId" element={<ProductDetails />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/products" element={<Home />}></Route>

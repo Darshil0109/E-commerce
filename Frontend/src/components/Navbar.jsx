@@ -303,11 +303,11 @@ function Navbar() {
           </ul>
         </div>
       <div
-        className={`fixed right-0 top-0 h-full w-80 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-50 ${
+        className={`flex flex-col min-h-screen fixed right-0 top-0 h-full w-80 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-50 ${
           isCartOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="p-4 border-b flex justify-between items-center bg-gray-50">
+        <div className="p-4 border-b flex justify-between items-center bg-gray-50 ">
           <h2 className="text-lg font-semibold">Shopping Cart</h2>
           <button
             onClick={() => setIsCartOpen(false)}
@@ -324,7 +324,7 @@ function Navbar() {
             Error Occurred: {cartError}
           </p>
         ) : cartData.length === 0 ? (
-          <div className="p-4 text-center text-gray-500">
+          <div className="p-4 text-center text-gray-500 flex-grow">
             Your cart is empty
           </div>
         ) : (
@@ -418,9 +418,11 @@ function Navbar() {
                     userid: userData.id,
                     items: cartData,
                     price: totalPrice,
+                    createdAt : new Date().toISOString(),
                   })
                 );
                 dispatch(fetchOrderRequest(userData.id));
+                setIsCartOpen(false)
               }
             }}
           >

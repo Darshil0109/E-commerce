@@ -81,9 +81,9 @@ const Home = () => {
   
   
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto p-4 flex-grow">
         {
           userError && <p className="text-red-500">{error}</p>}
         {(!userLoading && !isLoading) ? (
@@ -153,7 +153,7 @@ const Home = () => {
                   placeholder="Enter Product Image"
                   type="file"
                 >
-                  productImage
+                  Product Image (only .png)
                 </Input>
                 <br />
                 {/* <Input label="productImage" placeholder="Enter Product Image" type="file">Product Image</Input><br/> */}
@@ -171,13 +171,14 @@ const Home = () => {
                 {products.map((product) => (
                   <div key={product._id} className="max-w-xs mx-auto ">
                     <div className="group relative my-4 ">
-                        <div className="relative aspect-square overflow-hidden mt-12 cursor-pointer">
+                        <div className="relative aspect-square overflow-hidden mt-12">
                           <img
+                             onClick={()=>navigate(`/product/${product._id}`)}
                             src={`${import.meta.env.VITE_API_URL}/${product.productImage}`}
                             alt={`${product.name}`}
                             width={600}
                             height={600}
-                            className="object-contain w-full h-full transform group-hover:scale-105 transition-transform duration-300"
+                            className="object-contain w-full h-full transform group-hover:scale-105 transition-transform duration-300  cursor-pointer"
                           />
                           <div className="absolute bottom-0 left-0 right-0 translate-y-full opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                             <button
@@ -205,7 +206,7 @@ const Home = () => {
                                   );
                                 }
                               }}
-                              className={`w-full text-white py-3 px-4 text-sm  transition-colors ${checkInCart(product._id) ? 'bg-gray-600' : 'bg-black hover:bg-gray-800'}`}
+                              className={`w-full text-white py-3 px-4 text-sm  transition-colors cursor-pointer ${checkInCart(product._id) ? 'bg-gray-600' : 'bg-black hover:bg-gray-800'}`}
                               disabled = {checkInCart(product._id)}
                             >
                               {checkInCart(product._id) ? 'In The Cart' : 'Add to Cart'}
@@ -231,7 +232,7 @@ const Home = () => {
         )}
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 

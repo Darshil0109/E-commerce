@@ -121,7 +121,7 @@ const OrderSchema = new mongoose.Schema({
     },
   ],
   totalPrice: { type: Number, required: true },
-  createdAt : { type: Date, default:Date.now()},
+  createdAt : { type: Date},
   status : {
     type:String,
     default:"packaging",
@@ -195,8 +195,8 @@ app.get('/api/users/orders/:userid',async(req,res)=>{
 
 app.post('/api/users/orders',async(req,res)=>{
   try {
-    const {userid,items,price} = req.body;
-    const newOrder = new Order({userId:userid,items:items,totalPrice:price})
+    const {userid,items,price,createdAt} = req.body;
+    const newOrder = new Order({userId:userid,items:items,totalPrice:price,createdAt:createdAt})
     // console.log("this is new Order",newOrder);
     await newOrder.save();
     res.json(newOrder)

@@ -89,7 +89,7 @@ export const OrderReducer = (state = orderInitialState,action) =>{
     case ADD_ORDER_REQUEST:
       return state 
     case ADD_ORDER_SUCCESS:
-      return {loading:false,orders:action.payload,error:''}
+      return {loading:false,orders:[...state.orders , action.payload],error:''}
     case ADD_ORDER_FAILURE:
       return {loading:false,orders:null,error:action.payload}
     default:
