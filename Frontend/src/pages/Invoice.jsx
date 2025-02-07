@@ -94,7 +94,7 @@ const Invoice = () => {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-          });
+        });
         navigate('/login')
       }
       else if (!userDataLoading && userData.length === 0 && userError === '') {
@@ -135,7 +135,7 @@ const Invoice = () => {
     
     doc.setFontSize(12);
     doc.text(`Invoice : #${order._id}`, 14, 30);
-    doc.text(`Date: ${new Date(order.createdAt).toLocaleString()}`, 14, 36);
+    doc.text(`Date: ${new Date(order.createdAt).toLocaleString('default', { month: 'short' })} ${String(new Date(order.createdAt).getDate()).padStart(2,'0')}, ${new Date(order.createdAt).getFullYear()} , ${new Date(order.createdAt).toLocaleTimeString()}`, 14, 36);
   
     doc.setFont('helvetica', 'bold');
     doc.text('E-Shop Limited', 195, 20, { align: 'right' });
@@ -220,7 +220,7 @@ const Invoice = () => {
             <p>
               Invoice : # {order._id}
               <br />
-              Date: {new Date(order.createdAt).toLocaleString()}
+              Date: {new Date(order.createdAt).toLocaleString('default', { month: 'short' })} {String(new Date(order.createdAt).getDate()).padStart(2,'0')}, {new Date(order.createdAt).getFullYear()} , {new Date(order.createdAt).toLocaleTimeString()}
             </p>
           </div>
           <div className="text-right">

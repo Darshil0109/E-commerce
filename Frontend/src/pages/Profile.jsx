@@ -195,7 +195,7 @@ const Profile = () => {
                                   {item.status}
                               </th>
                               <th className="px-6 py-4">
-                                  {item.totalPrice}
+                                  {item.totalPrice.toFixed(2)}
                               </th>
                             </tr>)
                           })

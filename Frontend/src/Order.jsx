@@ -60,7 +60,7 @@ const Order = () => {
                   </p>
                 </div>
                 <div className="mt-2 sm:mt-0 text-left sm:text-right">
-                  <p className="text-sm font-medium ">Total (inc. GST)</p>
+                  <p className="text-sm font-medium ">Total <span className="text-sm text-gray-500">(incl. tax)</span></p>
                   <p className="text-lg font-semibold ">
                     ${order.totalPrice.toFixed(2)}
                   </p>

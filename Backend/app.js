@@ -239,8 +239,8 @@ app.post('/api/users/orders',async(req,res)=>{
   }
 })
 
-app.post('api/products/:id/reviews', verifyToken, async (req, res) => {
-  const { rating, comment } = req.body;
+app.post('/api/products/:id/reviews', verifyToken, async (req, res) => {
+  const { rating, comment,createdAt } = req.body;
 
   try {
     const product = await Product.findById(req.params.id);
@@ -255,15 +255,16 @@ app.post('api/products/:id/reviews', verifyToken, async (req, res) => {
     );
 
     if (alreadyReviewed) {
-      return res.status(400).json({ message: 'Product already reviewed' });
+      return res.status(400).json({ message: 'Product already reviewed by You' });
     }
-
+    
     // Create the review
     const review = {
-      user: req.user.userId,
+      user: req.user.id,
       name: req.user.name,
       rating: Number(rating),
-      comment
+      comment,
+      createdAt : createdAt,
     };
 
     // Add review to product
@@ -280,8 +281,10 @@ app.post('api/products/:id/reviews', verifyToken, async (req, res) => {
 
     await product.save();
 
-    res.status(201).json({ message: 'Review added successfully' });
+    res.status(201).json({ message: 'Review added successfully' , review : review });
   } catch (error) {
+    console.log(error);
+    
     res.status(500).json({ message: 'Server Error', error });
   }
 });
