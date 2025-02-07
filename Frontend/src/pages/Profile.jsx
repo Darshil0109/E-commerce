@@ -212,9 +212,9 @@ const Profile = () => {
                 backgroundColor="#ff0000"
                 className="h-16 w-32 "
               >
-                <div className="flex gap-2">LogOut<LogOut/></div>
+                <div className="flex gap-2 text-white">LogOut<LogOut/></div>
               </Button>
-              <Button onClick={()=>{setIsprofileModalOpen(true)}} backgroundColor="#0f0f0f" className="h-16 w-32 mt-16">Edit Profile</Button>
+              <Button onClick={()=>{setIsprofileModalOpen(true)}} backgroundColor="#0f0f0f" className="text-white h-16 w-32 mt-16">Edit Profile</Button>
             </div>
           </div>
             </div>

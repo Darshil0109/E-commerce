@@ -15,6 +15,8 @@ import { fetchOrderRequest, fetchProductsRequest, userAuthenticationRequest } fr
 import SearchResult from './pages/SearchResult';
 import ProductDetails from './pages/ProductDetails';
 import About from './pages/About';
+import Payment from './pages/Payment';
+import Invoice from './pages/Invoice';
 
 
 
@@ -36,6 +38,8 @@ const App = () => {
     <>
       <Routes>
           <Route path="/" element={<Landing />}></Route>
+          <Route path="/invoice/:orderId" element={<Invoice />}></Route>
+          <Route path="/payment" element={<Payment />}></Route>
           <Route path="/about" element={<About />}></Route>
           <Route path="/search/:productName" element={<SearchResult />}></Route>
           <Route path="/product/:productId" element={<ProductDetails />}></Route>

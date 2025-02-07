@@ -9,13 +9,11 @@ import {
   Search,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../Button";
 import {
-  addOrderRequest,
   deleteCartRequest,
-  fetchOrderRequest,
   updateProductQuantity,
   } from "../store/Actions";
 import { toast } from "react-toastify";
@@ -29,27 +27,11 @@ function Navbar() {
   const cartData = useSelector((state) => state.cart.cart);
   const cartError = useSelector((state) => state.cart.error);
   const dispatch = useDispatch();
-  const [products, setProducts] = useState([]);
+  const products = useSelector((state)=>state.products.products);
   const handleCartClick = () => {
     setIsCartOpen(true);
   };
   const isLoggedIn = useSelector((state) => state.userData.isLoggedIn);
-  const apiUrl = import.meta.env.VITE_API_URL;
-  useEffect(() => {
-    const getProducts = async () => {
-      fetch(`${import.meta.env.VITE_API_URL}/api/products`, {
-        method: "GET",
-      })
-        .then(async (response) => {
-          const tempProducts = await response.json();
-          setProducts(tempProducts);
-        })
-        .catch(async (e) => {
-          console.log(e);
-        });
-    };
-    getProducts();
-  }, [apiUrl]);
   let totalPrice = 0;
   const calculateTotal = (price) => {
     totalPrice += price;
@@ -413,15 +395,7 @@ function Navbar() {
                   progress: undefined,
                 });
               } else {
-                dispatch(
-                  addOrderRequest({
-                    userid: userData.id,
-                    items: cartData,
-                    price: totalPrice,
-                    createdAt : new Date().toISOString(),
-                  })
-                );
-                dispatch(fetchOrderRequest(userData.id));
+                navigate('/payment')
                 setIsCartOpen(false)
               }
             }}

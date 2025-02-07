@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { Download } from "lucide-react";
 
 
 
@@ -49,12 +50,17 @@ const Order = () => {
                   </p>
                 </div>
                 <div className="mt-2 sm:mt-0 text-left sm:text-right">
+                  <p onClick={()=>{navigate(`/invoice/${order._id}`)}} className="text-lg font-semibold cursor-pointer">
+                    <Download/>
+                  </p>
+                </div>
+                <div className="mt-2 sm:mt-0 text-left sm:text-right">
                   <p className="text-lg font-semibold text-green-400">
                     {order.status}
                   </p>
                 </div>
                 <div className="mt-2 sm:mt-0 text-left sm:text-right">
-                  <p className="text-sm font-medium ">Total</p>
+                  <p className="text-sm font-medium ">Total (inc. GST)</p>
                   <p className="text-lg font-semibold ">
                     ${order.totalPrice.toFixed(2)}
                   </p>

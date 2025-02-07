@@ -51,6 +51,31 @@ const userDataSchema = new mongoose.Schema({
 });
 
 
+const reviewSchema = new mongoose.Schema({
+  user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',  // Reference to the User model
+      required: true
+  },
+  name: {
+      type: String,
+      required: true
+  },
+  rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5
+  },
+  comment: {
+      type: String,
+      required: true
+  },
+  createdAt: {
+      type: Date,
+  }
+});
+
 const ProductSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -72,6 +97,9 @@ const ProductSchema = new mongoose.Schema({
     type: String,  // Store the path to the image or the image URL
     required: false,  // Optional, since not every product might have an image
   },
+  numReviews: { type: Number, default: 0 },
+  rating: { type: Number, default: 0 },
+  reviews:[reviewSchema],
 });
 
 const storage = multer.diskStorage({
@@ -103,6 +131,8 @@ const CartSchema = new mongoose.Schema({
   ],
 });
 
+
+
 const OrderSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -125,6 +155,10 @@ const OrderSchema = new mongoose.Schema({
   status : {
     type:String,
     default:"packaging",
+  },
+  paymentType:{
+    type:String,
+    required:true
   }
 })
 
@@ -195,8 +229,8 @@ app.get('/api/users/orders/:userid',async(req,res)=>{
 
 app.post('/api/users/orders',async(req,res)=>{
   try {
-    const {userid,items,price,createdAt} = req.body;
-    const newOrder = new Order({userId:userid,items:items,totalPrice:price,createdAt:createdAt})
+    const {userid,items,price,createdAt,paymentType} = req.body;
+    const newOrder = new Order({userId:userid,items:items,totalPrice:price,createdAt:createdAt,paymentType:paymentType})
     // console.log("this is new Order",newOrder);
     await newOrder.save();
     res.json(newOrder)
@@ -204,6 +238,53 @@ app.post('/api/users/orders',async(req,res)=>{
     res.json(error)
   }
 })
+
+app.post('api/products/:id/reviews', verifyToken, async (req, res) => {
+  const { rating, comment } = req.body;
+
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Check if user has already reviewed
+    const alreadyReviewed = product.reviews.find(
+      (rev) => rev.user.toString() === req.user.id
+    );
+
+    if (alreadyReviewed) {
+      return res.status(400).json({ message: 'Product already reviewed' });
+    }
+
+    // Create the review
+    const review = {
+      user: req.user.userId,
+      name: req.user.name,
+      rating: Number(rating),
+      comment
+    };
+
+    // Add review to product
+    product.reviews.push(review);
+    product.numReviews = product.reviews.length;
+    product.rating = ((product.rating * (product.numReviews - 1)) + Number(rating))/ product.numReviews;
+
+    // Calculate average rating
+    // let totalRating = 0;
+    // product.reviews.forEach((rev) => {
+    //   totalRating += rev.rating;
+    // });
+
+
+    await product.save();
+
+    res.status(201).json({ message: 'Review added successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error });
+  }
+});
 
 
 // User Routes
