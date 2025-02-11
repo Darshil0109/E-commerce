@@ -64,7 +64,7 @@ const reviewSchema = new mongoose.Schema({
   rating: {
       type: Number,
       required: true,
-      min: 1,
+      min: 0.5,
       max: 5
   },
   comment: {
@@ -171,12 +171,16 @@ const Order = mongoose.model('Order',OrderSchema);
 
 //Middleware to verify Token
 const verifyToken = (req, res, next) => {
+  
   const token = req.cookies?.token || req.headers['authorization']?.split(' ')[1]; // headers is for postmman
   if (!token) return res.status(403).json({ message: 'Access denied. No token provided.' });
+  // console.log(req.cookies);
   
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) return res.status(401).json({ message: 'Invalid token.' });
     req.user = decoded;  // Attach user info to request object
+    // console.log(decoded);
+    
     next();
   });
 };
@@ -186,8 +190,8 @@ const verifyToken = (req, res, next) => {
 //UserInfo Route
 app.get('/api/users/info',verifyToken,async(req,res)=>{
   try {
-    const info = await UserData.find(req.user.userId);
-    res.json(info[0]);
+    const info = await UserData.findOne({ userId: req.user.id });
+    res.json(info);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -288,6 +292,37 @@ app.post('/api/products/:id/reviews', verifyToken, async (req, res) => {
     res.status(500).json({ message: 'Server Error', error });
   }
 });
+
+app.delete('/api/products/:id/reviews/:userId', verifyToken, async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    const review = product.reviews.find(
+      (rev) => rev.user.toString() === req.params.userId
+    );
+    if (!review) {
+      return res.status(404).json({ message: 'Review not found' });
+    }
+    const index = product.reviews.indexOf(review);
+    product.reviews.splice(index, 1);
+    product.numReviews = product.reviews.length;
+    if (product.numReviews === 0) {
+      product.rating = 0;
+    } else {
+      let totalRating = 0;
+      product.reviews.forEach((rev) => {
+        totalRating += rev.rating;
+      });
+      product.rating = totalRating / product.numReviews;
+    }
+    await product.save();
+    res.json({ message: 'Review deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error });
+  }
+})
 
 
 // User Routes

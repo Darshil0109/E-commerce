@@ -178,6 +178,7 @@ const Home = () => {
                             alt={`${product.name}`}
                             width={600}
                             height={600}
+                            loading="lazy"
                             className="object-contain w-full h-full transform group-hover:scale-105 transition-transform duration-300  cursor-pointer"
                           />
                           <div className="absolute bottom-0 left-0 right-0 translate-y-full opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">

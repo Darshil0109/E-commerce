@@ -80,7 +80,7 @@ const Payment = () => {
         const fetchUserInfo = async () => {
           try {
             const data = await axios.get(
-              `${import.meta.env.VITE_API_URL}/api/users/info`
+              `${import.meta.env.VITE_API_URL}/api/users/info`, { withCredentials: true }
             );
             setUserInfo(data.data);
           } catch (error) {

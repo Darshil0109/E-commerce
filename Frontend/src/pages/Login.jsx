@@ -31,7 +31,7 @@ const Login = () => {
       {
         email: email,
         password: password,
-      }
+      }, { withCredentials: true }
     );
     if (response.data.token) {
       toast.success("Login Successfully", {

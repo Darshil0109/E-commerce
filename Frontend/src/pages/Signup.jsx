@@ -33,7 +33,7 @@ const Signup = () => {
             name :formData.get('name'),
             email : formData.get('email'),
             password : formData.get('password')
-          })
+          }, { withCredentials: true })
 
         if (response.data.token){
             toast.success('Signup Successfully', {

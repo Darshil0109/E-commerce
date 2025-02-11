@@ -115,7 +115,7 @@ const Invoice = () => {
       else if (userData.length !== 0) {
         try {
           const data = await axios.get(
-            `${import.meta.env.VITE_API_URL}/api/users/info`
+            `${import.meta.env.VITE_API_URL}/api/users/info`, { withCredentials: true }
           );
           setUserInfo(data.data);
         } catch (error) {
@@ -221,7 +221,7 @@ const Invoice = () => {
               Invoice : # {order._id}
               <br />
               Date: {new Date(order.createdAt).toLocaleString('default', { month: 'short' })} {String(new Date(order.createdAt).getDate()).padStart(2,'0')}, {new Date(order.createdAt).getFullYear()} , {new Date(order.createdAt).toLocaleTimeString()}
-            </p>
+            </p>  
           </div>
           <div className="text-right">
             <p className="font-bold">E-shop Limited</p>

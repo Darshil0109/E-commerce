@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 //Cart
 const getCart = async (userId) => {
   const cart = await axios.get(
-    `${import.meta.env.VITE_API_URL}/api/cart/${userId}`
+    `${import.meta.env.VITE_API_URL}/api/cart/${userId}`, { withCredentials: true }
   );
   return cart.data[0];
 };
@@ -30,7 +30,7 @@ const addCart = async (payload) => {
       userId:payload.userId,
       productId:payload.productId,
       quantity:payload.quantity,
-    }
+    }, { withCredentials: true }
   );
   return response.data;
 };
@@ -57,7 +57,7 @@ const deleteProduct = async(action) =>{
     data:{
       productId:action._id,
     }
-  })
+  }, { withCredentials: true })
   return response.data.updatedCart.products
 }
 function* deleteCartData(action){
@@ -82,7 +82,7 @@ const clearCart =async(userId) =>{
   try {
     const cart = await axios.put(`${import.meta.env.VITE_API_URL}/api/users/clearcart`,{
       userId:userId,
-    })
+    }, { withCredentials: true })
     return cart
   } catch (error) {
     console.log(error); 
@@ -171,7 +171,7 @@ const addOrders = async(payload) =>{
     price : payload.price,
     createdAt : payload.createdAt,
     paymentType : payload.paymentType,
-  })
+  }, { withCredentials: true })
   return order.data;
 }
 
@@ -194,7 +194,7 @@ export function* watchAddOrderRequest(){
 }
 
 const fetchProducts = async() =>{
-  const products= await axios.get(`${import.meta.env.VITE_API_URL}/api/products`)
+  const products= await axios.get(`${import.meta.env.VITE_API_URL}/api/products`, { withCredentials: true })
   return products.data
 }
 
@@ -218,7 +218,7 @@ const addProducts = async(product) =>{
     price:product.price,
     stock:product.stock,
     productImage : product.productImage,
-  },{headers:{'Content-Type': 'multipart/form-data'}})
+  },{headers:{'Content-Type': 'multipart/form-data'}}, { withCredentials: true })
   return products.data.product
 }
 

@@ -59,7 +59,7 @@ const Profile = () => {
     const fetchUserInfo = async () => {
       try {
         const data = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/users/info`
+          `${import.meta.env.VITE_API_URL}/api/users/info`, { withCredentials: true }
         );
         setUserInfo(data.data);
       } catch (error) {
@@ -86,7 +86,7 @@ const Profile = () => {
       state:state,
       country:country,
       postalCode:postalCode,
-    })
+    }, { withCredentials: true })
     setUserInfo(tempuserData.data)
     setIsprofileModalOpen(false)
   }
