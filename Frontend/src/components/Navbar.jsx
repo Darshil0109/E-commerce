@@ -333,8 +333,8 @@ function Navbar() {
                       <div className="flex items-center gap-2 mt-2">
                         <button
                           // onClick={() => updateQuantity(item.id, -1)}
-                          className={`p-1 hover:bg-gray-100 rounded ${item.quantity <= 1? 'text-gray-400' : ''}`}
-                          onClick={()=>{item.quantity === 1 ? '': handleQuantityChange(item._id,item.quantity - 1)}}
+                          className={`p-1 hover:bg-gray-100 rounded ${product.stock ===0 || item.quantity <= 1? 'text-gray-400' : ''}`}
+                          onClick={()=>{product.stock !==0 && item.quantity === 1 ? '': handleQuantityChange(item._id,item.quantity - 1)}}
                         >
                           <Minus
                             className="w-4 h-4"
@@ -343,8 +343,8 @@ function Navbar() {
                         <span className="w-8 text-center">{item.quantity}</span>
                         <button
                           // onClick={() => updateQuantity(item.id, 1)}
-                          className="p-1 hover:bg-gray-100 rounded"
-                          onClick={()=>handleQuantityChange(item._id,item.quantity + 1)}
+                          className={`p-1 hover:bg-gray-100 rounded ${product.stock ===0 || item.quantity >= product.stock ? 'text-gray-400' : ''} `}
+                          onClick={()=>{product.stock !==0 && item.quantity >= product.stock ? '' :  handleQuantityChange(item._id,item.quantity + 1)}}
                         >
                           <Plus
                             className="w-4 h-4"
@@ -394,7 +394,8 @@ function Navbar() {
                   draggable: true,
                   progress: undefined,
                 });
-              } else {
+              }
+              else {
                 navigate('/payment')
                 setIsCartOpen(false)
               }

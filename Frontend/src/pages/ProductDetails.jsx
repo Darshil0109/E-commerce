@@ -294,6 +294,9 @@ const ProductDetails = () => {
                   )}
                 </button>
               </p>
+              <div className={`flex gap-4 my-8 ${product[0].stock > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                {product[0].stock > 0 ? 'In Stock' : 'Out of Stock'}
+              </div>
               <div className="flex gap-4 my-8 ">
                 Price : $ {product[0].price}
               </div>
@@ -302,19 +305,21 @@ const ProductDetails = () => {
                 <div className="flex gap-4">
                   <Minus
                     className={`cursor-pointer ${
-                      quantity <= 0 ? "text-gray-400" : ""
+                      (quantity <= 0 || product[0].stock===0) ? "text-gray-400" : ""
                     }`}
                     onClick={() => {
-                      if (quantity > 0 && !checkInCart(product[0]._id)) {
+                      if (product[0].stock !== 0 && quantity > 0 && !checkInCart(product[0]._id)) {
                         setQuantity(quantity - 1);
                       }
                     }}
                   />{" "}
                   {quantity}{" "}
                   <Plus
-                    className="cursor-pointer"
+                    className={`cursor-pointer ${
+                      (quantity >= product[0].stock || product[0].stock===0) ? "text-gray-400" : ""
+                    }`}
                     onClick={() => {
-                      if (!checkInCart(product[0]._id)) {
+                      if (product[0].stock !== 0 && quantity < product[0].stock && !checkInCart(product[0]._id)) {
                         setQuantity(quantity + 1);
                       }
                     }}
@@ -336,6 +341,17 @@ const ProductDetails = () => {
                     // navigate('/login')
                   } else if (quantity === 0) {
                     toast.warn("Please Select Quantity", {
+                      position: "top-center",
+                      autoClose: 3000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                    });
+                  } 
+                  else if (product[0].stock === 0) {
+                    toast.warn("Product Out of Stock", {
                       position: "top-center",
                       autoClose: 3000,
                       hideProgressBar: false,

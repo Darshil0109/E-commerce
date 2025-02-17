@@ -3,7 +3,7 @@ import Button from "../Button";
 import { useEffect, useRef, useState } from "react";
 import {  useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { addOrderRequest, fetchOrderRequest } from "../store/Actions";
+import { addOrderRequest, fetchOrderRequest, fetchProductsRequest } from "../store/Actions";
 import { toast } from "react-toastify";
 const Payment = () => {
     const [isFormVisible,setIsFormVisible] = useState(true)
@@ -69,12 +69,11 @@ const Payment = () => {
                 paymentType : 'cash on Delivery'
                 })
             );
-            dispatch(fetchOrderRequest(userData.id));
             navigate('/orders')
-        }
-        console.log();
-        
-        
+            dispatch(fetchProductsRequest())
+            dispatch(fetchOrderRequest(userData.id));
+            return
+        }        
     }
     useEffect(() => {
         const fetchUserInfo = async () => {

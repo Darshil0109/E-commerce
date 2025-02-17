@@ -26,47 +26,10 @@ const Home = () => {
 
   const error = useSelector((state) => state.products.error);
   const isLoading = useSelector((state) => state.products.loading);
-  const [isOpen, setIsOpen] = useState(false);
+  
+  
 
-  const handleClick = () => {
-    setIsOpen(true);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    // console.log(formData.get("productImage").files);
-    const name = formData.get("name");
-    const description = formData.get("description");
-    const price = formData.get("price");
-    const stock = formData.get("stock");
-    const quantity = formData.get("quantity");
-    const productImage = formData.get("productImage");
-    if (productImage.type !== "image/png"){
-      toast.error("Only .png Files are allowed", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
-    else{
-      dispatch(
-        addProductsRequest({
-          name,
-          description,
-          price,
-          stock,
-          quantity,
-          productImage,
-        })
-      );
-      setIsOpen(false);
-    }
-  };
+  
   // useEffect(()=>{
   //   console.log(products);
 
@@ -88,83 +51,9 @@ const Home = () => {
           userError && <p className="text-red-500">{error}</p>}
         {(!userLoading && !isLoading) ? (
           <>
-            <div className="flex justify-center gap-4 mb-6">
-              <Button
-                onClick={()=>{
-                  if (!isLoggedIn) {
-                    toast.error("Please Login to Add Products", {
-                      position: "top-center",
-                      autoClose: 3000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      progress: undefined,
-                    });
-                    // navigate('/login')
-                  }
-                  else{
-                    handleClick()
-                  }
-                }}
-                className=" text-white px-4 py-2 rounded"
-                backgroundColor="#000000"
-              >
-                Upload Product
-              </Button>
-            </div>
+            
 
-            <Modal
-              isOpen={isOpen}
-              title={"Upload Form"}
-              onClose={() => setIsOpen(false)}
-            >
-              {/* <form onSubmit={handleSubmit} className="space-y-4"> */}
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <Input label="name" placeholder="Enter Product Name">
-                  Name
-                </Input>{" "}
-                <br />
-                <Input
-                  label="price"
-                  placeholder="Enter Product Price"
-                  type="Number"
-                  step="0.01"
-                >
-                  Price
-                </Input>
-                <br />
-                <Input
-                  label="description"
-                  placeholder="Enter Product Description"
-                >
-                  Description
-                </Input>
-                <br />
-                <Input
-                  label="stock"
-                  placeholder="Enter Product Stock"
-                  type="Number"
-                >
-                  Stock
-                </Input>
-                <Input
-                  label="productImage"
-                  placeholder="Enter Product Image"
-                  type="file"
-                >
-                  Product Image (only .png)
-                </Input>
-                <br />
-                {/* <Input label="productImage" placeholder="Enter Product Image" type="file">Product Image</Input><br/> */}
-                <Button
-                  type="submit"
-                  className="bg-green-500 text-white px-4 py-2 rounded"
-                >
-                  Upload
-                </Button>
-              </form>
-            </Modal>
+            
 
             {!isLoading && products.length > 0 ? (
               <div className="flex flex-wrap gap-2 justify-center">
@@ -196,6 +85,17 @@ const Home = () => {
                                   });
                                   // navigate('/login')
                                 }
+                                else if (product.stock === 0) {
+                                  toast.warn("Product out of Stock", {
+                                    position: "top-center",
+                                    autoClose: 3000,
+                                    hideProgressBar: false,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                    progress: undefined,
+                                  });
+                                }
                                 else{
                                   dispatch(
                                     addCartRequest({
@@ -210,7 +110,7 @@ const Home = () => {
                               className={`w-full text-white py-3 px-4 text-sm  transition-colors cursor-pointer ${checkInCart(product._id) ? 'bg-gray-600' : 'bg-black hover:bg-gray-800'}`}
                               disabled = {checkInCart(product._id)}
                             >
-                              {checkInCart(product._id) ? 'In The Cart' : 'Add to Cart'}
+                              {checkInCart(product._id) ? 'In The Cart' : (product.stock === 0 ? 'Out of Stock' : 'Add to Cart')}
                             </button>
                           </div>
                         </div>

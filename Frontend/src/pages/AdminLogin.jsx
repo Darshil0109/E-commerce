@@ -1,15 +1,12 @@
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { userAuthenticationRequest } from "../store/Actions";
-axios.defaults.withCredentials = true; 
-const Login = () => {
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+const AdminLogin = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const dispatch = useDispatch()
   const handleLogin = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -27,14 +24,16 @@ const Login = () => {
       });
     }
     const response = await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/users/login`,
+      `${import.meta.env.VITE_API_URL}/api/admin/login`,
       {
         email: email,
         password: password,
       }, { withCredentials: true }
     );
-    if (response.data.token) {
-      toast.success("Login Successfully", {
+    console.log(response);
+    
+    if (response.data.message === "Login Successfull") {
+        toast.success("Login Successfully", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
@@ -43,8 +42,7 @@ const Login = () => {
         draggable: true,
         progress: undefined,
       });
-      dispatch(userAuthenticationRequest());
-      navigate(-1);
+      navigate("/admin");
     } else {
       toast.error("Login Failed", {
         position: "top-right",
@@ -61,7 +59,7 @@ const Login = () => {
     <div className=" min-h-screen flex items-center bg-gray-50 justify-center">
       {" "}
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">Admin Login</h2>
         <form onSubmit={handleLogin} method="POST">
           <div className="mb-4 ">
             <label
@@ -106,18 +104,12 @@ const Login = () => {
             type="submit"
             className="w-full bg-blue-500 text-gray-50 py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            Sign In
+            Log In
           </button>
         </form>
-        <p className="mt-4 text-center text-sm">
-          Not have an account?{" "}
-          <Link to="/signup" className="text-[#7d22f3] hover:underline">
-            Sign Up
-          </Link>
-        </p>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default AdminLogin;

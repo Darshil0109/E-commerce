@@ -32,6 +32,11 @@ const UserSchema = new mongoose.Schema({
   password: String,
 });
 
+const AdminSchema = new mongoose.Schema({
+  email: { type: String, unique: true },
+  password: String,
+})
+
 const userDataSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -168,6 +173,7 @@ const Product = mongoose.model('Product', ProductSchema);
 const Cart = mongoose.model('Cart', CartSchema);
 const UserData = mongoose.model('UserData', userDataSchema);
 const Order = mongoose.model('Order',OrderSchema);
+const Admin = mongoose.model('Admin',AdminSchema);
 
 //Middleware to verify Token
 const verifyToken = (req, res, next) => {
@@ -236,6 +242,22 @@ app.post('/api/users/orders',async(req,res)=>{
     const {userid,items,price,createdAt,paymentType} = req.body;
     const newOrder = new Order({userId:userid,items:items,totalPrice:price,createdAt:createdAt,paymentType:paymentType})
     // console.log("this is new Order",newOrder);
+    for (const item of items) {
+      const productId = item.productId;  // Assuming productId is a field in each item
+      const quantityOrdered = item.quantity;
+
+      // Update product stock
+      const updatedProduct = await Product.findOneAndUpdate(
+        { _id: productId, stock: { $gte: quantityOrdered } }, // Check if enough stock exists
+        { $inc: { stock: -quantityOrdered } },               // Reduce stock
+        { new: true }
+      );
+
+      if (!updatedProduct) {
+        return res.status(400).json({ message: `Insufficient stock for product ID: ${productId}` });
+      }
+    }
+
     await newOrder.save();
     res.json(newOrder)
   } catch (error) {
@@ -486,6 +508,91 @@ app.get('/api/cart/:userId', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+
+
+
+
+//Admin Panel Data
+
+app.get('/api/admin/data', async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const totalProducts = await Product.countDocuments();
+    const totalOrders = await Order.countDocuments();
+    const result = await Order.aggregate([
+      { $group: { _id: null, total: { $sum: '$totalPrice' } } }
+    ]);
+    const totalRevenue = result.length > 0 ? result[0].total : 0;
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 4);
+    startDate.setHours(0, 0, 0, 0);
+    const orders = await Order.aggregate([
+      {
+        $match: { createdAt: { $gte: startDate } }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    const lastFiveDaysOrders = Array.from({ length: 5 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (4 - i));
+      const formattedDate = date.toISOString().split('T')[0];
+      const dayData = orders.find(o => o._id === formattedDate);
+      return { date: formattedDate, noOfOrders: dayData ? dayData.count : 0 };
+    });
+
+    const products = await Product.find();
+    const outOfStock = products.filter(p => p.stock === 0).length;
+    const zerotoTen = products.filter(p => p.stock > 0 && p.stock <= 10).length;
+    const eleventoTwenty = products.filter(p => p.stock > 10 && p.stock <= 20).length;
+    const twentyOneToFourty = products.filter(p => p.stock > 20 && p.stock <= 40).length;
+    const fortyOneToFifty = products.filter(p => p.stock > 40 && p.stock <= 50).length;
+    const fiftplus = products.filter(p => p.stock > 50).length;
+
+    const outofstockproducts = products.filter(p => p.stock === 0);
+    const stockData = [
+      {"name":"Out of Stock", "value" :outOfStock},
+      {"name":"1-10 Stock", "value" :zerotoTen},
+      {"name":"11-20 Stock", "value" :eleventoTwenty},
+      {"name":"21-40 Stock", "value" :twentyOneToFourty},
+      {"name":"41-50 Stock", "value" :fortyOneToFifty},
+      {"name":"50+ Stock", "value" :fiftplus},
+    ]
+    res.json({ totalUsers, totalProducts, totalOrders ,totalRevenue,lastFiveDaysOrders,stockData,outofstockproducts});
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
+app.post('/api/admin/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const admin = await Admin.findOne({ email });
+    if (!admin) return res.status(400).json({ error: 'Invalid credentials' });
+    const isMatch = bcrypt.compare(password,admin.password)
+    if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
+    const token = jwt.sign(
+      { id: admin._id, email: admin.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+    res.cookie("adminToken", token, {
+      maxAge: 3 * 3600000, // 24 hour
+    });
+    res.json({message:"Login Successfull"});
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 
 
 // Start Server
