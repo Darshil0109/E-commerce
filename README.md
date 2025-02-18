@@ -66,3 +66,16 @@ For any inquiries, reach out at [darshil01092004@gmail.com].
 
 
 
+
+## Screenshots
+
+![Landing Page](./Frontend/public/Landing_Page.png)
+![Featured Product](./Frontend/public/Featured_Products.png)
+![Shopping Cart](./Frontend/public/Shopping_Cart.png)
+![Product Details](./Frontend/public/Product_Details_Page.png)
+![Customer_Reviews](./Frontend/public/Review_Section.png)
+![Payment Page](./Frontend/public/Payment_Page.png)
+![Order Page](./Frontend/public/Order_Page.png)
+![Invoice Page](./Frontend/public/Invoice_Page.png)
+![Admin Page](./Frontend/public/Admin_Page.png)
+
