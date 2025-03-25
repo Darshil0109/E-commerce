@@ -175,6 +175,7 @@ const UserData = mongoose.model('UserData', userDataSchema);
 const Order = mongoose.model('Order',OrderSchema);
 const Admin = mongoose.model('Admin',AdminSchema);
 
+const isProduction = process.env.ENV === "PROD";
 //Middleware to verify Token
 const verifyToken = (req, res, next) => {
   
@@ -366,7 +367,9 @@ app.post('/api/users/register', async (req, res) => {
       { expiresIn: "24h" }
     );
     res.cookie("token", token, {
-      maxAge: 24 * 3600000, // 24 hour
+      secure: isProduction, // Only true in production (requires HTTPS)
+      sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
+      maxAge: 24 * 3600000, // 24 hours
     });
     res.status(201).json({ message: 'User registered successfully',token });
   } catch (err) {
@@ -394,7 +397,9 @@ app.post('/api/users/login', async (req, res) => {
       { expiresIn: "24h" }
     );
     res.cookie("token", token, {
-      maxAge: 24 * 3600000, // 24 hour
+      secure: isProduction, // Only true in production (requires HTTPS)
+      sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
+      maxAge: 24 * 3600000, // 24 hours
     });
     res.json({ token, userId: user._id });
   } catch (err) {
@@ -586,8 +591,10 @@ app.post('/api/admin/login', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
-    res.cookie("adminToken", token, {
-      maxAge: 3 * 3600000, // 24 hour
+    res.cookie("token", token, {
+      secure: isProduction, // Only true in production (requires HTTPS)
+      sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
+      maxAge: 3 * 3600000, // 3 hours
     });
     res.json({message:"Login Successfull"});
   } catch (err) {
