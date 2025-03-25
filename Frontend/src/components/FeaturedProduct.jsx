@@ -7,16 +7,16 @@ const FeaturedProduct = () => {
     const [cursor,setCursor] = useState('grab');
     
   return (
-    <div style={{ width: '100vw', height: '70vh', position:'relative' , overflowY:'auto'}}>
+    <div style={{ width: '100vw', height: '70vh', position:'relative' , overflowY:'auto' }}>
             <h2 className="absolute top-4 text-4xl font-bold text-gray-950 text-center w-full">Product of the month</h2>
-          <Canvas gl={{alpha:true}} style={{ width: '100%', height: '100%',background:'transparent',cursor:cursor }} onMouseLeave={()=>setCursor('grab')} onMouseDown={()=>{setCursor('grabbing')}} 
-
+          <Canvas gl={{alpha:true}} style={{ width: '100%', height: '100%',background:'transparent',cursor:cursor, overflowX:'hidden',overflowY:'auto' , maxWidth:window.innerWidth }} onMouseLeave={()=>setCursor('grab')} onMouseDown={()=>{setCursor('grabbing')}} 
+  
             onMouseUp={()=>
               {
                 setCursor('grab')
               }
-
-          }>
+            }
+          >
             
             <ambientLight intensity={0.5} />
             <directionalLight position={[2, 2, 2]} />

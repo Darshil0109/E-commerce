@@ -81,12 +81,12 @@ function Navbar() {
   
   return (
     <>
-      <nav className="py-6 px-6 border-b bg-white relative ">
+      <nav className="px-6 border-b bg-white relative ">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <div className="flex flex-col">
             <Link to="/" className="text-2xl font-bold tracking-tight">
-              E-Shop
+              <img src="logo.png" alt="E-Shop" className="h-24 w-24" />
             </Link>
             <span className="text-sm text-gray-600"></span>
           </div>
@@ -261,7 +261,7 @@ function Navbar() {
         )}
       </nav>
       <div
-        className={`${isSearchVisible ? "flex sm:hidden w-full bg-white h-16 md:w-40 translate-y-0" : "-translate-y-12 z-[-10]"} absolute overflow-hidden transition-all duration-300 ease-out`}
+        className={`${isSearchVisible ? "flex sm:hidden w-full bg-white h-16 md:w-40 translate-y-0" : "-translate-y-12 z-[-10]"} absolute overflow-hidden transition-all duration-300 ease-out z-10`}
       >
         <input
           onChange={(e)=>
