@@ -596,7 +596,7 @@ app.post('/api/admin/login', async (req, res) => {
       sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
       maxAge: 3 * 3600000, // 3 hours
     });
-    res.json({message:"Login Successfull"});
+    res.json({message:"Login Successfull",token});
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
