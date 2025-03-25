@@ -367,6 +367,7 @@ app.post('/api/users/register', async (req, res) => {
       { expiresIn: "24h" }
     );
     res.cookie("token", token, {
+      httpOnly: false, // Allows client-side access
       secure: isProduction, // Only true in production (requires HTTPS)
       sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
       maxAge: 24 * 3600000, // 24 hours
@@ -397,6 +398,7 @@ app.post('/api/users/login', async (req, res) => {
       { expiresIn: "24h" }
     );
     res.cookie("token", token, {
+      httpOnly: false, // Allows client-side access
       secure: isProduction, // Only true in production (requires HTTPS)
       sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
       maxAge: 24 * 3600000, // 24 hours
@@ -592,11 +594,12 @@ app.post('/api/admin/login', async (req, res) => {
       { expiresIn: "24h" }
     );
     res.cookie("token", token, {
+      httpOnly: false, // Allows client-side access
       secure: isProduction, // Only true in production (requires HTTPS)
       sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
       maxAge: 3 * 3600000, // 3 hours
     });
-    res.json({message:"Login Successfull",token});
+    res.json({message:"Login Successfull"});
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
