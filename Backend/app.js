@@ -192,7 +192,7 @@ const verifyToken = (req, res, next) => {
 };
 
 // Routes
-app.get('/',verifyToken,async(req,res)=>{
+app.get('/',async(req,res)=>{
   res.send('api for e-commerce app');
 })
 //UserInfo Route
