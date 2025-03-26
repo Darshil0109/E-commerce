@@ -532,9 +532,10 @@ app.post("/remove-cookie", (req, res) => {
   }
 
   res.clearCookie(cookieName, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    httpOnly: true, // Don't Allow client-side access
+    secure: isProduction, // Only true in production (requires HTTPS)
+    sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
+    maxAge: 24 * 3600000, // 24 hours
   });
 
   res.json({ success: true, message: `Cookie '${cookieName}' removed successfully` });
