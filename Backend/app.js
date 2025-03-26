@@ -581,28 +581,37 @@ app.get('/api/admin/data', async (req, res) => {
   }
 })
 
-app.post('/api/admin/login', async (req, res) => {
+app.post('/api/users/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const admin = await Admin.findOne({ email });
-    if (!admin) return res.status(400).json({ error: 'Invalid credentials' });
-    const isMatch = bcrypt.compare(password,admin.password)
-    console.log(`is Password Matched ? for email id ${email} : ${isMatch}`);
+    
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ error: 'Invalid credentials' });
+
+    // FIX: Add 'await' to bcrypt.compare()
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
+
+    await UserData.updateOne(
+      { userId: user._id },
+      { $set: { lastLogin: Date.now() } }
+    );
+
     const token = jwt.sign(
-      { id: admin._id, email: admin.email },
+      { id: user._id, name: user.name, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
-    console.log("Here is the token",token);
-    
+
     res.cookie("token", token, {
-      httpOnly: false, // Allows client-side access
-      secure: isProduction, // Only true in production (requires HTTPS)
-      sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
-      maxAge: 3 * 3600000, // 3 hours
+      httpOnly: false,
+      secure: isProduction,
+      sameSite: isProduction ? "None" : "Lax",
+      maxAge: 24 * 3600000,
     });
-    res.json({message:"Login Successfull"});
+
+    res.json({ token, userId: user._id });
+
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
