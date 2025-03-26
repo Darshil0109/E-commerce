@@ -587,12 +587,15 @@ app.post('/api/admin/login', async (req, res) => {
     const admin = await Admin.findOne({ email });
     if (!admin) return res.status(400).json({ error: 'Invalid credentials' });
     const isMatch = bcrypt.compare(password,admin.password)
+    console.log(`is Password Matched ? for email id ${email} : ${isMatch}`);
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
     const token = jwt.sign(
       { id: admin._id, email: admin.email },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
+    console.log("Here is the token",token);
+    
     res.cookie("token", token, {
       httpOnly: false, // Allows client-side access
       secure: isProduction, // Only true in production (requires HTTPS)
