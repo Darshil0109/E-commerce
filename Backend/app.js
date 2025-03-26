@@ -537,7 +537,7 @@ app.post("/remove-cookie", (req, res) => {
     sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
     maxAge: 24 * 3600000, // 24 hours
   });
-
+  res.cookie(cookieName, "", { expires: new Date(0) });
   res.json({ success: true, message: `Cookie '${cookieName}' removed successfully` });
 });
 
