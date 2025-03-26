@@ -367,7 +367,7 @@ app.post('/api/users/register', async (req, res) => {
       { expiresIn: "24h" }
     );
     res.cookie("token", token, {
-      httpOnly: false, // Allows client-side access
+      httpOnly: true, // Don't Allow client-side access
       secure: isProduction, // Only true in production (requires HTTPS)
       sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
       maxAge: 24 * 3600000, // 24 hours
@@ -398,7 +398,7 @@ app.post('/api/users/login', async (req, res) => {
       { expiresIn: "24h" }
     );
     res.cookie("token", token, {
-      httpOnly: false, // Allows client-side access
+      httpOnly: true, // Don't Allow client-side access
       secure: isProduction, // Only true in production (requires HTTPS)
       sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
       maxAge: 24 * 3600000, // 24 hours
@@ -518,10 +518,27 @@ app.get('/api/cart/:userId', async (req, res) => {
   }
 });
 
+// get all cookies
+app.get("/get-cookies", (req, res) => {
+  console.log("Cookies received:", req.cookies); // Debugging in backend console
+  res.json(req.cookies); // Send all cookies as JSON response
+});
 
+app.post("/remove-cookie", (req, res) => {
+  const { cookieName } = req.body; // Get cookie name from request body
 
+  if (!cookieName) {
+    return res.status(400).json({ success: false, message: "Cookie name is required" });
+  }
 
+  res.clearCookie(cookieName, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
 
+  res.json({ success: true, message: `Cookie '${cookieName}' removed successfully` });
+});
 
 //Admin Panel Data
 
@@ -599,7 +616,7 @@ app.post('/api/admin/login', async (req, res) => {
       { expiresIn: "24h" }
     );
     res.cookie("token", token, {
-      httpOnly: false, // Allows client-side access
+      httpOnly: true, // Don't Allow client-side access
       secure: isProduction, // Only true in production (requires HTTPS)
       sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
       maxAge: 24 * 3600000, // 24 hours

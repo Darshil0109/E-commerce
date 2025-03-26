@@ -1,5 +1,4 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 import {jwtDecode} from "jwt-decode";
 import { call, put, takeLatest,takeEvery } from "redux-saga/effects";
 import { ADD_CART_REQUEST, addCartFailure, addCartSuccess, deleteCartSuccess,deleteCartFailure,DELETE_CART_REQUEST, USER_AUTHENTICATION_REQUEST,  userAuthenticationFailure, userAuthenticationSuccess, FETCH_ORDER_REQUEST, fetchOrderFailure, fetchOrderSuccess, ADD_ORDER_REQUEST, addOrderFailure, addOrderSuccess, clearCartSuccess, clearCartFailure, CLEAR_CART_REQUEST, clearCartRequest, FETCH_PRODUCTS_REQUEST, fetchProductsFailure, fetchProductsSuccess, ADD_PRODUCTS_REQUEST, addProductsSuccess, addProductsFailure } from "./Actions";
@@ -125,7 +124,17 @@ export function* watchClearCartRequest(){
 //UserData
 
 export function* validateUser(){
-  const token = Cookies.get("token");
+      // Fetch cookie data from API
+      const response = yield call(fetch, `${import.meta.env.VITE_API_URL}/get-cookies`, {
+        credentials: "include",
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch cookies");
+      }
+  
+      const data = yield response.json(); // Get JSON response
+  const token = data.token
   
   if (token){
     try {

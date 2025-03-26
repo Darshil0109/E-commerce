@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
 import Button from "../Button";
 import { toast } from "react-toastify";
 import Modal from "../Modal";
@@ -16,10 +15,10 @@ import { userAuthenticationRequest } from "../store/Actions";
 const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const handleLogout = () => {
+  const handleLogout = async() => {
     // Remove the token from cookies
+    await axios.post(`${import.meta.env.VITE_API_URL}/remove-cookie`,{cookieName : 'token'}, { withCredentials: true });
     navigate("/");
-    Cookies.remove("token"); // Adjust 'token' if your cookie name is different
     dispatch(userAuthenticationRequest())
     // Navigate to the root URL
     toast.error("Logged Out", {
