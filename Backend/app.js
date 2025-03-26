@@ -604,9 +604,9 @@ app.post('/api/admin/login', async (req, res) => {
     const { email, password } = req.body;
     
     const user = await Admin.findOne({ email });
-    if (!user) return res.status(400).json({ error: 'Invalid credentials' });
+    if (!user) return res.status(400).json({ error: 'Invalid Email' });
     const isMatch = bcrypt.compare(password,user.password)
-    if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
+    if (!isMatch) return res.status(400).json({ error: "Invalid Password" });
     const userData = await UserData.updateOne(
       { userId: user._id }, // Find by _id
       { $set: { lastLogin: Date.now() } } // Update lastLogin
@@ -614,15 +614,15 @@ app.post('/api/admin/login', async (req, res) => {
     const token = jwt.sign(
       { id: user._id, name: user.name, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: "24h" }
+      { expiresIn: "3h" }
     );
-    res.cookie("token", token, {
+    res.cookie("adminToken", token, {
       httpOnly: true, // Don't Allow client-side access
       secure: isProduction, // Only true in production (requires HTTPS)
       sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
-      maxAge: 24 * 3600000, // 24 hours
+      maxAge: 3 * 3600000, // 3 hours
     });
-    res.json({ token, userId: user._id });
+    res.json({ message : "Admin Login Successfull" });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

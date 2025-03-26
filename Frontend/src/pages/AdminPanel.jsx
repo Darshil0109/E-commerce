@@ -105,11 +105,17 @@ const AdminPanel = () => {
     return () => clearTimeout(timeout);
   }, [isAdminLogin, navigate]);
   useEffect(() => {
-    if (
-      document.cookie.split(";").find((c) => c.trim().startsWith("adminToken"))
-    ) {
-      setIsAdminLogin(true);
+    const getAdminLoginData = async () => {
+      const cookieResponse = await axios.post(
+        `${import.meta.env.VITE_API_URL}/get-cookies`,{}, { withCredentials: true })
+      const adminToken = cookieResponse.adminToken
+      if (
+        adminToken
+      ) {
+        setIsAdminLogin(true);
+      }
     }
+    getAdminLoginData();
   }, []);
   //colors for pie chart
   const COLORS = [
