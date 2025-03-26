@@ -110,7 +110,7 @@ const AdminPanel = () => {
         withCredentials: true,
       });
       
-      const adminToken = response?.adminToken
+      const adminToken = response.data?.adminToken
       console.log(response);
       
       console.log(adminToken);
