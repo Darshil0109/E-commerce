@@ -386,7 +386,7 @@ app.post('/api/users/login', async (req, res) => {
     
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ error: 'Invalid credentials' });
-    const isMatch = bcrypt.compare(password,user.password)
+    const isMatch = await bcrypt.compare(password,user.password)
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
     const userData = await UserData.updateOne(
       { userId: user._id }, // Find by _id
@@ -581,43 +581,34 @@ app.get('/api/admin/data', async (req, res) => {
   }
 })
 
-app.post('/api/users/login', async (req, res) => {
+app.post('/api/admin/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     
-    const user = await User.findOne({ email });
+    const user = await Admin.findOne({ email });
     if (!user) return res.status(400).json({ error: 'Invalid credentials' });
-
-    // FIX: Add 'await' to bcrypt.compare()
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = bcrypt.compare(password,user.password)
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
-
-    await UserData.updateOne(
-      { userId: user._id },
-      { $set: { lastLogin: Date.now() } }
+    const userData = await UserData.updateOne(
+      { userId: user._id }, // Find by _id
+      { $set: { lastLogin: Date.now() } } // Update lastLogin
     );
-
     const token = jwt.sign(
       { id: user._id, name: user.name, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
-
     res.cookie("token", token, {
-      httpOnly: false,
-      secure: isProduction,
-      sameSite: isProduction ? "None" : "Lax",
-      maxAge: 24 * 3600000,
+      httpOnly: false, // Allows client-side access
+      secure: isProduction, // Only true in production (requires HTTPS)
+      sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
+      maxAge: 24 * 3600000, // 24 hours
     });
-
     res.json({ token, userId: user._id });
-
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
-
-
 
 // Start Server
 const PORT = process.env.PORT || 3000;
