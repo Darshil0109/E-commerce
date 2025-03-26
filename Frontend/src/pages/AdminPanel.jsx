@@ -108,7 +108,7 @@ const AdminPanel = () => {
     const getAdminLoginData = async () => {
       const cookieResponse = await axios.get(
         `${import.meta.env.VITE_API_URL}/get-cookies`,{}, { withCredentials: true })
-      const adminToken = cookieResponse.adminToken
+      const adminToken = cookieResponse?.adminToken
       if (
         adminToken
       ) {
