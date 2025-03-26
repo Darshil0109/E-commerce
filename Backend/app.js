@@ -367,8 +367,6 @@ app.post('/api/users/register', async (req, res) => {
       { expiresIn: "24h" }
     );
     res.cookie("token", token, {
-      domain: ".vercel.app", 
-      path: "/",
       httpOnly: false, // Allows client-side access
       secure: isProduction, // Only true in production (requires HTTPS)
       sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
@@ -400,8 +398,6 @@ app.post('/api/users/login', async (req, res) => {
       { expiresIn: "24h" }
     );
     res.cookie("token", token, {
-      domain: ".vercel.app", 
-      path: "/",
       httpOnly: false, // Allows client-side access
       secure: isProduction, // Only true in production (requires HTTPS)
       sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD
@@ -603,8 +599,6 @@ app.post('/api/admin/login', async (req, res) => {
       { expiresIn: "24h" }
     );
     res.cookie("token", token, {
-      domain: ".vercel.app", 
-      path: "/",
       httpOnly: false, // Allows client-side access
       secure: isProduction, // Only true in production (requires HTTPS)
       sameSite: isProduction ? "None" : "Lax", // "None" for cross-origin cookies in PROD

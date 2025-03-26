@@ -33,7 +33,6 @@ function Navbar() {
   };
   
   const isLoggedIn = useSelector((state) => state.userData.isLoggedIn);
-  console.log('is Authenticated',isLoggedIn);
   let totalPrice = 0;
   const calculateTotal = (price) => {
     totalPrice += price;

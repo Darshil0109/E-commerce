@@ -126,8 +126,6 @@ export function* watchClearCartRequest(){
 
 export function* validateUser(){
   const token = Cookies.get("token");
-  console.log(Cookies);
-  console.log(document.cookie);
   
   if (token){
     try {
