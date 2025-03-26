@@ -106,10 +106,12 @@ const AdminPanel = () => {
   }, [isAdminLogin, navigate]);
   useEffect(() => {
     const getAdminLoginData = async () => {
-      const cookieResponse = await axios.get(
-        `${import.meta.env.VITE_API_URL}/get-cookies`,{}, { withCredentials: true })
-      const adminToken = cookieResponse?.adminToken
-      console.log(cookieResponse);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/get-cookies`, {
+        withCredentials: true,
+      });
+      
+      const adminToken = response?.adminToken
+      console.log(response);
       
       console.log(adminToken);
       
