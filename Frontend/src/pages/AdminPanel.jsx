@@ -86,6 +86,8 @@ const AdminPanel = () => {
   ]
   useEffect(() => {
     const getAdminData = async () => {
+      console.log(isAdminLogin);
+      
       if (!isAdminLogin) {
         navigate("/admin/login");
       } else {
@@ -118,7 +120,9 @@ const AdminPanel = () => {
       if (
         adminToken
       ) {
+        
         setIsAdminLogin(true);
+        console.log("isAdminLogin True");
       }
     }
     getAdminLoginData();
