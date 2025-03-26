@@ -103,7 +103,7 @@ const AdminPanel = () => {
     };
     const timeout = setTimeout(() => {
       getAdminData();
-    }, 100);
+    }, 900);
     return () => clearTimeout(timeout);
   }, [isAdminLogin, navigate]);
   useEffect(() => {
