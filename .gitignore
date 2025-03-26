@@ -7,7 +7,6 @@ frontend/build/
 backend/dist/
 backend/.next/
 
-backend/uploads/
 
 # Ignore environment variables
 frontend/.env
