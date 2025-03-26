@@ -44,7 +44,7 @@ const Login = () => {
         progress: undefined,
       });
       dispatch(userAuthenticationRequest());
-      navigate(-1);
+      // navigate(-1);
     } else {
       toast.error("Login Failed", {
         position: "top-right",
